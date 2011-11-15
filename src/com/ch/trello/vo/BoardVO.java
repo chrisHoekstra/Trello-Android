@@ -6,10 +6,13 @@ public class BoardVO {
     public String name;
     public String _id;
     public PrefsVO prefs;
-    public String closed; // TODO - boolean?
+    public boolean closed;
     public int nActionsSinceLastView;
+    public LabelNamesVO labelNames;
     
+    public ArrayList<BoardListVO> lists;
     public ArrayList<String> invitations;
     public ArrayList<MembershipVO> memberships;
     public ArrayList<String> idMembersWatching;
+    public ArrayList<String> idMembersRemoved;
 }

@@ -4,7 +4,9 @@ import android.os.AsyncTask;
 
 import com.ch.trello.model.TrelloModel;
 import com.ch.trello.service.TrelloService;
-import com.ch.trello.vo.BoardsResultVO;
+import com.ch.trello.vo.AllBoardsResultVO;
+import com.ch.trello.vo.BoardResultVO;
+import com.ch.trello.vo.BoardVO;
 
 public class TrelloController {
 
@@ -29,6 +31,11 @@ public class TrelloController {
     public void login(String username, String password) {
         new UserLoginTask().execute(username, password);
     }
+
+    public void fetchBoard(String mBoardId) {
+        new BoardFetchTask().execute(mBoardId);
+    }
+    
     
     private void addListeners() {
         mModel.addListener(new TrelloModel.OnLoginCompleteListener() {
@@ -49,9 +56,10 @@ public class TrelloController {
             Boolean result = false;
             
             if (mService.login(parameters[0], parameters[1])) {
-                BoardsResultVO results = mService.getBoardResults();
+                AllBoardsResultVO results = mService.getBoardResults();
                 
                 if (results != null) {
+                    mModel.setBoards(results.boards);
                     result = true;
                 }
             }
@@ -63,6 +71,25 @@ public class TrelloController {
         protected void onPostExecute(Boolean result) {
             if (result) {
                 mModel.loginComplete();
+            }
+        }
+    }
+    
+    private class BoardFetchTask extends AsyncTask<String, Void, BoardResultVO> {
+        
+        @Override
+        protected BoardResultVO doInBackground(String... parameters) {
+            BoardResultVO result = null;
+            
+            result = mService.getBoard(parameters[0]);
+            
+            return result;
+        }
+        
+        @Override
+        protected void onPostExecute(BoardResultVO result) {
+            if (result != null) {
+                mModel.boardReceived(result);
             }
         }
     }

@@ -21,6 +21,11 @@
             </intent-filter>
             
         </activity>
+        
+        <activity android:name=".activity.DashboardActivity"></activity>
+        <activity android:name=".activity.BoardActivity"></activity>
+        <activity android:name=".activity.BoardListActivity"></activity>
+        <activity android:name=".activity.CardActivity"></activity>
     </application>
 
 	<uses-permission android:name="android.permission.INTERNET" />

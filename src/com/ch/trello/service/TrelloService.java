@@ -1,8 +1,6 @@
 package com.ch.trello.service;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -13,7 +11,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -21,36 +18,27 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
-import org.apache.http.StatusLine;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
@@ -59,7 +47,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ch.trello.vo.BoardsResultVO;
+import com.ch.trello.vo.AllBoardsResultVO;
+import com.ch.trello.vo.BoardResultVO;
+import com.ch.trello.vo.BoardVO;
 import com.ch.trello.vo.LoginResultsVO;
 
 public class TrelloService {
@@ -67,9 +57,11 @@ public class TrelloService {
     
     private static final String TRELLO_URL = "https://trello.com/";
     private static final String ME_BOARDS = "data/me/boards";
+    private static final String DATA_BOARD = "data/board";
     private static final String API_APP = "api/app";
     
     private static final Object METHOD_LOGIN = "login";
+
     
     public JsonFactory mJsonFactory;
     public ObjectMapper mObjectMapper;
@@ -137,8 +129,8 @@ public class TrelloService {
         return results;
     }
     
-    public BoardsResultVO getBoardResults() {
-        BoardsResultVO results = null;
+    public AllBoardsResultVO getBoardResults() {
+        AllBoardsResultVO results = null;
         HttpGet httpGet = new HttpGet(TRELLO_URL + ME_BOARDS);
         HttpClient httpClient = getHttpClient();
         
@@ -149,7 +141,7 @@ public class TrelloService {
             HttpResponse response = httpClient.execute(httpGet, mContext);
             
             if (response != null) {
-                results = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), BoardsResultVO.class);
+                results = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), AllBoardsResultVO.class);
             }
 
         } catch (ClientProtocolException e) {
@@ -160,6 +152,32 @@ public class TrelloService {
         
         return results;
     }
+
+    public BoardResultVO getBoard(String boardId) {
+        BoardResultVO results = null;
+        HttpGet httpGet = new HttpGet(TRELLO_URL + DATA_BOARD + "/" + boardId + "/current");
+        HttpClient httpClient = getHttpClient();
+        
+        try {
+            httpGet.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
+
+            HttpResponse response = httpClient.execute(httpGet, mContext);
+            
+            if (response != null) {
+                results = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), BoardResultVO.class);
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return results;
+    }
+    
+    
     
     public class CustomSSLSocketFactory extends SSLSocketFactory {
 

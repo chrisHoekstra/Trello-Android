@@ -1,11 +1,11 @@
 package com.ch.trello.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.ch.trello.R;
 import com.ch.trello.controller.TrelloController;
@@ -54,7 +54,8 @@ public class MainActivity extends Activity {
         mOnLoginCompleteListener = new TrelloModel.OnLoginCompleteListener() {
             @Override
             public void onLoginCompleteEvent(TrelloModel model) {
-                Toast.makeText(MainActivity.this, "Hurray, we logged in!", Toast.LENGTH_SHORT);
+                Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+                startActivity(intent);
             }
         };
         

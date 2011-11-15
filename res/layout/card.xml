@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#E3E3E3"
+    android:paddingBottom="5dip"
+    android:paddingLeft="10dip"
+    android:paddingRight="10dip"
+    android:paddingTop="5dip" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/list_item_background"
+        android:orientation="vertical"
+        android:paddingBottom="10dip"
+        android:paddingLeft="15dip"
+        android:paddingRight="25dip"
+        android:paddingTop="10dip" >
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="This is a really long name of the item so I can see it wrap nicely."
+            android:textColor="#1A1A1A"
+            android:textSize="18sp"
+            android:paddingBottom="10dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, donec voluptatem at interdum risus, urna nunc, et ac consectetur dignissim eget mauris et. Eu faucibus mi sed, justo varius vestibulum morbi id lacus, suspendisse tristique amet bibendum eget duis mauris, eget proin. Tincidunt sed non sodales in, dui consequat in dolor faucibus, tristique quis quam vestibulum laoreet, proin ultricies vitae nibh enim, cras magna turpis duis rutrum eleifend sapien."
+            android:textColor="#333333"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</RelativeLayout>
