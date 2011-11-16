@@ -2,29 +2,28 @@ package com.ch.trello.activity;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.ch.trello.BundleKeys;
 import com.ch.trello.R;
-import com.ch.trello.adapter.BoardAdapter;
-import com.ch.trello.adapter.BoardListAdapter;
 import com.ch.trello.adapter.CardAdapter;
 import com.ch.trello.controller.TrelloController;
 import com.ch.trello.model.TrelloModel;
 import com.ch.trello.vo.BoardListVO;
 import com.ch.trello.vo.BoardVO;
 import com.ch.trello.vo.CardVO;
-
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 public class BoardListActivity extends Activity {
     
@@ -36,6 +35,7 @@ public class BoardListActivity extends Activity {
     
     // View items
     private ListView mCardList;
+    private TextView mBoardListText;
     
     // Models
     private TrelloModel mModel;
@@ -56,7 +56,8 @@ public class BoardListActivity extends Activity {
         setContentView(R.layout.board_list);
         
         // Instantiate view items
-        mCardList = (ListView) findViewById(R.id.card_list);
+        mCardList      = (ListView) findViewById(R.id.card_list);
+        mBoardListText = (TextView) findViewById(R.id.board_list);
         
         // Instantiate models
         mModel = TrelloModel.getInstance();
@@ -203,5 +204,16 @@ public class BoardListActivity extends Activity {
 
         mCardAdapter = new CardAdapter(this, R.id.name, filteredCards);
         mCardList.setAdapter(mCardAdapter);
+        
+        for (BoardVO board : mModel.getCurrentBoard().boards) {
+            if (board._id.equals(mBoardId)) {                
+                for (BoardListVO list : board.lists) {
+                    if (list._id.equals(mBoardListId)) {
+                        mBoardListText.setText(list.name);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

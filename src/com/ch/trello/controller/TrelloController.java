@@ -59,7 +59,7 @@ public class TrelloController {
                 AllBoardsResultVO results = mService.getBoardResults();
                 
                 if (results != null) {
-                    mModel.setBoards(results.boards);
+                    mModel.setAllBoardsResult(results);
                     result = true;
                 }
             }

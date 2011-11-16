@@ -3,6 +3,7 @@ package com.ch.trello.model;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.ch.trello.vo.AllBoardsResultVO;
 import com.ch.trello.vo.BoardResultVO;
 import com.ch.trello.vo.BoardVO;
 
@@ -74,12 +75,12 @@ public class TrelloModel {
     
     
     // Methods
-    public ArrayList<BoardVO> getBoards() {
-        return mBoards;
+    public AllBoardsResultVO getAllBoardsResult() {
+        return mAllBoardsResult;
     }
     
-    public void setBoards(ArrayList<BoardVO> value) {
-        mBoards = value;
+    public void setAllBoardsResult(AllBoardsResultVO value) {
+        mAllBoardsResult = value;
     }
     
     public BoardResultVO getCurrentBoard() {
@@ -96,7 +97,7 @@ public class TrelloModel {
     
     
     // Variables
-    private ArrayList<BoardVO> mBoards;
+    private AllBoardsResultVO mAllBoardsResult;
     private BoardResultVO mCurrentBoard;
     
     // Model functions

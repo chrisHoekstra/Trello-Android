@@ -2,14 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:background="#E3E3E3"
+    android:orientation="vertical"
+    android:padding="10dip" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/full_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Full Name"
+            android:textColor="#1A1A1A"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:text="(username)"
+            android:textColor="#999999"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/boards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:text="@string/boards"
+        android:textColor="#1A1A1A"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <ListView
         android:id="@+id/board_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#E3E3E3"
-        android:dividerHeight="0px"
-        android:divider="#E3E3E3" />
+        android:divider="#E3E3E3"
+        android:dividerHeight="0px" />
 
 </LinearLayout>

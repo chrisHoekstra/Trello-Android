@@ -2,8 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:background="#E3E3E3"
+    android:orientation="vertical"
+    android:padding="10dip" >
 
+    <TextView
+        android:id="@+id/board_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:text="Board List Name"
+        android:textColor="#1A1A1A"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+    
     <ListView
         android:id="@+id/card_list"
         android:layout_width="fill_parent"

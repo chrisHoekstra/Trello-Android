@@ -12,13 +12,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ch.trello.BundleKeys;
 import com.ch.trello.R;
 import com.ch.trello.adapter.BoardAdapter;
 import com.ch.trello.controller.TrelloController;
 import com.ch.trello.model.TrelloModel;
+import com.ch.trello.vo.AllBoardsResultVO;
 import com.ch.trello.vo.BoardVO;
+import com.ch.trello.vo.MemberVO;
 
 public class DashboardActivity extends Activity {
     
@@ -30,6 +33,8 @@ public class DashboardActivity extends Activity {
     
     // View items
     private ListView mBoardsList;
+    private TextView mFullNameText;
+    private TextView mUsernameText;
     
     // Models
     private TrelloModel mModel;
@@ -48,7 +53,9 @@ public class DashboardActivity extends Activity {
         setContentView(R.layout.dashboard);
         
         // Instantiate view items
-        mBoardsList = (ListView) findViewById(R.id.board_list);
+        mBoardsList   = (ListView) findViewById(R.id.board_list);
+        mFullNameText = (TextView) findViewById(R.id.full_name);
+        mUsernameText = (TextView) findViewById(R.id.username);
         
         // Instantiate models
         mModel = TrelloModel.getInstance();
@@ -180,7 +187,22 @@ public class DashboardActivity extends Activity {
     }
     
     private void populateView() {
-        mBoardAdapter = new BoardAdapter(this, R.id.name, mModel.getBoards());
+        AllBoardsResultVO allBoards = mModel.getAllBoardsResult();
+        
+        mBoardAdapter = new BoardAdapter(this, R.id.name, allBoards.boards);
         mBoardsList.setAdapter(mBoardAdapter);
+        
+        MemberVO user = null;
+        for (MemberVO member : allBoards.members) {
+            if (member._id.equals(allBoards.idMember)) {
+                user = member;
+                break;
+            }
+        }
+        
+        if (user != null) {
+            mFullNameText.setText(user.fullName);
+            mUsernameText.setText('(' + user.username + ')');
+        }   
     }
 }

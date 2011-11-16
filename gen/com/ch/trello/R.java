@@ -15,14 +15,17 @@ public final class R {
         public static final int list_item_background=0x7f020001;
     }
     public static final class id {
-        public static final int board_list=0x7f050004;
-        public static final int board_lists_list=0x7f050000;
-        public static final int card_list=0x7f050001;
-        public static final int description=0x7f050003;
-        public static final int login=0x7f050007;
-        public static final int name=0x7f050002;
-        public static final int password=0x7f050006;
-        public static final int username=0x7f050005;
+        public static final int board=0x7f050000;
+        public static final int board_list=0x7f050002;
+        public static final int board_lists_list=0x7f050001;
+        public static final int boards=0x7f050008;
+        public static final int card_list=0x7f050003;
+        public static final int description=0x7f050005;
+        public static final int full_name=0x7f050006;
+        public static final int login=0x7f05000a;
+        public static final int name=0x7f050004;
+        public static final int password=0x7f050009;
+        public static final int username=0x7f050007;
     }
     public static final class layout {
         public static final int board=0x7f030000;
@@ -36,6 +39,7 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
+        public static final int boards=0x7f040004;
         public static final int login=0x7f040003;
         public static final int password=0x7f040002;
         public static final int username_or_email=0x7f040001;

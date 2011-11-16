@@ -1,7 +1,5 @@
 package com.ch.trello.activity;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ch.trello.BundleKeys;
 import com.ch.trello.R;
@@ -34,6 +33,7 @@ public class BoardActivity extends Activity {
     
     // View items
     private ListView mBoardListsList;
+    private TextView mBoardText;
     
     // Models
     private TrelloModel mModel;
@@ -55,6 +55,7 @@ public class BoardActivity extends Activity {
         
         // Instantiate view items
         mBoardListsList = (ListView) findViewById(R.id.board_lists_list);
+        mBoardText      = (TextView) findViewById(R.id.board);
         
         // Instantiate models
         mModel = TrelloModel.getInstance();
@@ -68,16 +69,21 @@ public class BoardActivity extends Activity {
             public void onBoardReceveidEvent(TrelloModel model, BoardResultVO result) {
                 mModel.setCurrentBoard(result);
                 
-                ArrayList<BoardListVO> boardLists = new ArrayList<BoardListVO>();
+                BoardVO currentBoard = null;
                 
                 for (BoardVO board : result.boards) {
                     if (board._id.equals(mBoardId)) {
-                        boardLists = board.lists;
+                        currentBoard = board;
+                        break;
                     }
                 }
                 
-                mBoardListAdapter = new BoardListAdapter(BoardActivity.this, R.id.name, boardLists);
-                mBoardListsList.setAdapter(mBoardListAdapter);
+                if (currentBoard != null) {
+                    mBoardListAdapter = new BoardListAdapter(BoardActivity.this, R.id.name, currentBoard.lists);
+                    mBoardListsList.setAdapter(mBoardListAdapter);
+                
+                    mBoardText.setText(currentBoard.name);
+                }
             }
         };
         
