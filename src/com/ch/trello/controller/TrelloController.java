@@ -1,12 +1,17 @@
 package com.ch.trello.controller;
 
+import java.util.ArrayList;
+
 import android.os.AsyncTask;
 
 import com.ch.trello.model.TrelloModel;
 import com.ch.trello.service.TrelloService;
+import com.ch.trello.vo.AddCardVO;
 import com.ch.trello.vo.AllBoardsResultVO;
+import com.ch.trello.vo.ApiMethodVO;
 import com.ch.trello.vo.BoardResultVO;
 import com.ch.trello.vo.BoardVO;
+import com.ch.trello.vo.CardVO;
 
 public class TrelloController {
 
@@ -27,7 +32,7 @@ public class TrelloController {
     private TrelloService mService;
     
     
-    // Methods
+    // Public Methods
     public void login(String username, String password) {
         new UserLoginTask().execute(username, password);
     }
@@ -36,7 +41,23 @@ public class TrelloController {
         new BoardFetchTask().execute(mBoardId);
     }
     
+    public void addCard(String boardId, String boardListId, String cardName, int position) {
+        AddCardVO addCard = new AddCardVO();
+        
+        addCard.method = ApiMethodVO.CREATE;
+        addCard.token  = mService.getFilteredToken();
+        addCard.data.idParents.add(boardListId);
+        addCard.data.idParents.add(boardId);
+        addCard.data.attrs.name = cardName;
+        addCard.data.attrs.pos = position;
+        addCard.data.attrs.idBoard = boardId;
+        addCard.data.attrs.idList = boardListId;
+        
+        new AddCardTask().execute(addCard);
+    }
     
+    
+    // Private methods
     private void addListeners() {
         mModel.addListener(new TrelloModel.OnLoginCompleteListener() {
             @Override
@@ -90,6 +111,25 @@ public class TrelloController {
         protected void onPostExecute(BoardResultVO result) {
             if (result != null) {
                 mModel.boardReceived(result);
+            }
+        }
+    }
+    
+    private class AddCardTask extends AsyncTask<AddCardVO, Void, CardVO> {
+        
+        @Override
+        protected CardVO doInBackground(AddCardVO... parameters) {
+            CardVO result = null;
+            
+            result = mService.addCard(parameters[0]);
+            
+            return result;
+        }
+        
+        @Override
+        protected void onPostExecute(CardVO result) {
+            if (result != null) {
+                mModel.cardAdded(result);
             }
         }
     }

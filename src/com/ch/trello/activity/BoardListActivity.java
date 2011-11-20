@@ -13,7 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ch.trello.BundleKeys;
@@ -36,6 +39,11 @@ public class BoardListActivity extends Activity {
     // View items
     private ListView mCardList;
     private TextView mBoardListText;
+    private EditText mAddCardEdit;
+    private Button mAddCardButton;
+    private Button mAddButton;
+    private Button mCancelButton;
+    private RelativeLayout mAddCardLayout;
     
     // Models
     private TrelloModel mModel;
@@ -44,6 +52,7 @@ public class BoardListActivity extends Activity {
     private TrelloController mController;
     
     // Listeners
+    private TrelloModel.OnCardAddedListener mOnCardAddedListener;
     
     // Activity variables
     private CardAdapter mCardAdapter;
@@ -58,6 +67,11 @@ public class BoardListActivity extends Activity {
         // Instantiate view items
         mCardList      = (ListView) findViewById(R.id.card_list);
         mBoardListText = (TextView) findViewById(R.id.board_list);
+        mAddCardEdit   = (EditText) findViewById(R.id.add_card_edit);
+        mAddCardButton = (Button)   findViewById(R.id.add_card);
+        mAddButton     = (Button)   findViewById(R.id.add);
+        mCancelButton  = (Button)   findViewById(R.id.cancel);
+        mAddCardLayout = (RelativeLayout) findViewById(R.id.add_card_layout);
         
         // Instantiate models
         mModel = TrelloModel.getInstance();
@@ -66,6 +80,14 @@ public class BoardListActivity extends Activity {
         mController = TrelloController.getInstance();
         
         // Create listeners
+        mOnCardAddedListener = new TrelloModel.OnCardAddedListener() {
+            @Override
+            public void onCardAddedEvent(TrelloModel model, CardVO card) {
+                mModel.getCurrentBoard().cards.add(card);
+                populateView();
+            }
+        };
+        
         mCardList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
@@ -76,7 +98,30 @@ public class BoardListActivity extends Activity {
             }
         });
         
+        mAddCardButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                beginAddCard();
+            }
+        });
+        
+        mCancelButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endAddCard();
+            }
+        });
+        
+
+        mAddButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mController.addCard(mBoardId, mBoardListId, mAddCardEdit.getText().toString(), 65536);
+            }
+        });
+        
         // Add listeners
+        mModel.addListener(mOnCardAddedListener);
         
         // Get bundle extras
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
@@ -101,7 +146,7 @@ public class BoardListActivity extends Activity {
         super.onCreateOptionsMenu(menu);
         
         MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.menu_id, menu);
+        inflater.inflate(R.menu.board_list_menu, menu);
         
         return true;
     }
@@ -109,8 +154,9 @@ public class BoardListActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            //case R.id.view_item_id : 
-            //    break;
+            case R.id.add_card :
+                beginAddCard();
+                break;
             default:
                 break;
         }
@@ -120,7 +166,7 @@ public class BoardListActivity extends Activity {
         // triggering an onClick event
         return false;
     }
-    
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo info) {
         super.onCreateContextMenu(menu, view, info);
@@ -170,7 +216,8 @@ public class BoardListActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         
-        // Remove listeners
+        mModel.removeListener(mOnCardAddedListener);
+        
         // Release remaining resources
     }
 
@@ -215,5 +262,15 @@ public class BoardListActivity extends Activity {
                 }
             }
         }
+    }
+    
+    private void beginAddCard() {
+        mAddCardButton.setVisibility(View.GONE);
+        mAddCardLayout.setVisibility(View.VISIBLE);
+    }
+    
+    private void endAddCard() {
+        mAddCardLayout.setVisibility(View.GONE);
+        mAddCardButton.setVisibility(View.VISIBLE);
     }
 }

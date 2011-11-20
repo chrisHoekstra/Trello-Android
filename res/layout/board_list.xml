@@ -1,27 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#E3E3E3"
-    android:orientation="vertical"
-    android:padding="10dip" >
+    android:paddingLeft="10dip"
+    android:paddingRight="10dip"
+    android:paddingTop="10dip" >
 
     <TextView
         android:id="@+id/board_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dip"
-        android:text="Board List Name"
+        android:text="Loading list..."
         android:textColor="#1A1A1A"
         android:textSize="16sp"
         android:textStyle="bold" />
-    
+
     <ListView
         android:id="@+id/card_list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/footer"
+        android:layout_below="@+id/board_list"
         android:background="#E3E3E3"
+        android:divider="#E3E3E3"
         android:dividerHeight="0px"
-        android:divider="#E3E3E3" />
+        android:fadingEdge="none" />
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
+
+        <RelativeLayout
+            android:id="@+id/add_card_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/add_card_edit"
+                android:background="@drawable/green_button_background"
+                android:text="@string/add_card"
+                android:textColor="#FFFFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/add_card_edit"
+                android:layout_marginLeft="3dip"
+                android:layout_toRightOf="@+id/add"
+                android:background="@drawable/border_button_background"
+                android:paddingLeft="10dip"
+                android:paddingRight="10dip"
+                android:text="X"
+                android:textColor="#FF9D9D9D"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/add_card_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="60dip"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="false"
+                android:layout_marginBottom="3dip"
+                android:background="@drawable/list_item_background"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/add_card"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:paddingBottom="10dip"
+            android:paddingLeft="10dip"
+            android:paddingTop="10dip"
+            android:text="@string/add_card"
+            android:textColor="#666666" />
+    </RelativeLayout>
+
+</RelativeLayout>

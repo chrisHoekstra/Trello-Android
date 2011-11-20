@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import com.ch.trello.vo.AllBoardsResultVO;
 import com.ch.trello.vo.BoardResultVO;
 import com.ch.trello.vo.BoardVO;
+import com.ch.trello.vo.CardVO;
 
 public class TrelloModel {
     
@@ -27,11 +28,16 @@ public class TrelloModel {
     public interface OnBoardReceivedListener {
         void onBoardReceveidEvent(TrelloModel model, BoardResultVO result);
     }
+
+    public interface OnCardAddedListener {
+        void onCardAddedEvent(TrelloModel model, CardVO card);
+    }
     
     
     // Listener Arrays
     private final ConcurrentLinkedQueue<OnLoginCompleteListener> onLoginCompleteListeners = new ConcurrentLinkedQueue<OnLoginCompleteListener>();
     private final ConcurrentLinkedQueue<OnBoardReceivedListener> onBoardReceivedListeners = new ConcurrentLinkedQueue<OnBoardReceivedListener>();
+    private final ConcurrentLinkedQueue<OnCardAddedListener> onCardAddedListeners         = new ConcurrentLinkedQueue<OnCardAddedListener>();
     
     
     // Alert Listeners
@@ -43,6 +49,11 @@ public class TrelloModel {
     private final void alertOnBoardReceivedListeners(BoardResultVO result) {
         for (final OnBoardReceivedListener listener : onBoardReceivedListeners)
             listener.onBoardReceveidEvent(this, result);
+    }
+    
+    private final void alertOnCardAddedListeners(CardVO card) {
+        for (final OnCardAddedListener listener : onCardAddedListeners)
+            listener.onCardAddedEvent(this, card);
     }
     
 
@@ -59,6 +70,12 @@ public class TrelloModel {
         }
     }
 
+    public final void addListener(OnCardAddedListener listener) {
+        synchronized (onCardAddedListeners) {
+            onCardAddedListeners.add(listener);
+        }
+    }
+
     
     // Remove Listener
     public final void removeListener(OnLoginCompleteListener listener) {
@@ -70,6 +87,12 @@ public class TrelloModel {
     public final void removeListener(OnBoardReceivedListener listener) {
         synchronized (onBoardReceivedListeners) {
             onBoardReceivedListeners.remove(listener);
+        }
+    }
+
+    public final void removeListener(OnCardAddedListener listener) {
+        synchronized (onCardAddedListeners) {
+            onCardAddedListeners.remove(listener);
         }
     }
     
@@ -95,6 +118,9 @@ public class TrelloModel {
         alertOnBoardReceivedListeners(result);
     }
     
+    public void cardAdded(CardVO card) {
+        alertOnCardAddedListeners(card);
+    }
     
     // Variables
     private AllBoardsResultVO mAllBoardsResult;

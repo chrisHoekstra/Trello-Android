@@ -14,7 +14,7 @@ public class CardVO {
     public BadgeVO badges;
     
     public ArrayList<String> idChecklists;
-    public ArrayList<CheckItemStateVO> checkItemState;
+    public ArrayList<CheckItemStateVO> checkItemStates;
     public ArrayList<String> attachments;
     public ArrayList<String> idMembers;
     public ArrayList<String> idMembersVoted;

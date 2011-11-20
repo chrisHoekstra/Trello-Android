@@ -2,6 +2,7 @@ package com.ch.trello.service;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
@@ -11,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -29,6 +31,7 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -47,9 +50,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ch.trello.vo.AddCardVO;
 import com.ch.trello.vo.AllBoardsResultVO;
 import com.ch.trello.vo.BoardResultVO;
-import com.ch.trello.vo.BoardVO;
+import com.ch.trello.vo.CardVO;
 import com.ch.trello.vo.LoginResultsVO;
 
 public class TrelloService {
@@ -59,8 +63,10 @@ public class TrelloService {
     private static final String ME_BOARDS = "data/me/boards";
     private static final String DATA_BOARD = "data/board";
     private static final String API_APP = "api/app";
+    private static final String API_CARD = "api/card";
     
     private static final Object METHOD_LOGIN = "login";
+
 
     
     public JsonFactory mJsonFactory;
@@ -87,6 +93,18 @@ public class TrelloService {
         mContext.setAttribute(ClientContext.COOKIE_STORE, mCookieStore);
     }
 
+    public String getFilteredToken() {
+        ArrayList<Cookie> cookies = new ArrayList<Cookie>(mCookieStore.getCookies());
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("token")) {
+                String token = cookie.getValue();
+                return token.replaceFirst("%2F", "/");
+            }
+        }
+        
+        return "";
+    }
+    
     public boolean login(String username, String password) {
         boolean results = false;
         HttpClient httpClient = getHttpClient();
@@ -176,8 +194,39 @@ public class TrelloService {
         
         return results;
     }
-    
-    
+
+    public CardVO addCard(AddCardVO addCardVO) {
+        CardVO result = null;
+        HttpClient httpClient = getHttpClient();
+        HttpPost httpPost = new HttpPost(TRELLO_URL + API_CARD);
+        
+        try {
+            StringWriter writer = new StringWriter();
+            mObjectMapper.writeValue(writer, addCardVO);
+            
+            StringEntity parametersString = new StringEntity(writer.toString());
+            parametersString.setContentEncoding("UTF-8");
+            parametersString.setContentType("application/json");
+            
+            httpPost.setEntity(parametersString);
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
+            
+            HttpResponse response = httpClient.execute(httpPost, mContext);
+            
+            if (response != null) {
+                result = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), CardVO.class);
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
     
     public class CustomSSLSocketFactory extends SSLSocketFactory {
 
