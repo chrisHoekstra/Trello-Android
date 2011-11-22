@@ -12,6 +12,8 @@ public class TrelloModel {
     
     // Singleton stuff
     private static TrelloModel model;
+    
+
     public  static TrelloModel getInstance() {
         if (model == null) {
             model = new TrelloModel();
@@ -38,7 +40,7 @@ public class TrelloModel {
     private final ConcurrentLinkedQueue<OnLoginCompleteListener> onLoginCompleteListeners = new ConcurrentLinkedQueue<OnLoginCompleteListener>();
     private final ConcurrentLinkedQueue<OnBoardReceivedListener> onBoardReceivedListeners = new ConcurrentLinkedQueue<OnBoardReceivedListener>();
     private final ConcurrentLinkedQueue<OnCardAddedListener> onCardAddedListeners         = new ConcurrentLinkedQueue<OnCardAddedListener>();
-    
+    public Boolean isLoginFail;
     
     // Alert Listeners
     private final void alertOnLoginCompleteListeners() {

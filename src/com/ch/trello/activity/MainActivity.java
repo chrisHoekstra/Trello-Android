@@ -1,6 +1,8 @@
 package com.ch.trello.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -54,15 +56,20 @@ public class MainActivity extends Activity {
         mOnLoginCompleteListener = new TrelloModel.OnLoginCompleteListener() {
             @Override
             public void onLoginCompleteEvent(TrelloModel model) {
-                Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-                startActivity(intent);
+                if(!model.isLoginFail.booleanValue() ){
+                    Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else{
+                    showError(getString(R.string.login_error), false);
+                }
             }
         };
         
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mController.login(mUsernameText.getText().toString(), mPasswordText.getText().toString());
+                mController.login(MainActivity.this,mUsernameText.getText().toString(), mPasswordText.getText().toString());
             }
         });
         
@@ -94,5 +101,21 @@ public class MainActivity extends Activity {
         if (bundle != null) {
             //mBundleVariable = bundle.getString(BundleKeys.BUNDLE_VARIABLE);
         }
+    }
+
+    protected void showError(String message, final boolean finish) {
+        AlertDialog.Builder build = new AlertDialog.Builder(this);
+        build.setMessage(message);
+        build.setPositiveButton(getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        if (finish)
+                            finish();
+                    }
+
+                });
+        build.create().show();
     }
 }

@@ -133,7 +133,8 @@ public class TrelloService {
             
             if (response != null) {
                 LoginResultsVO loginResults = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), LoginResultsVO.class);
-                results = true;
+               if(loginResults.idMember != null && loginResults.token !=null && loginResults.username != null  ){
+                results = true;    }
             }
 
         } catch (ClientProtocolException e) {

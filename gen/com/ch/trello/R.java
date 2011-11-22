@@ -52,7 +52,10 @@ public final class R {
         public static final int add_card=0x7f040005;
         public static final int app_name=0x7f040000;
         public static final int boards=0x7f040004;
+        public static final int loading=0x7f040008;
         public static final int login=0x7f040003;
+        public static final int login_error=0x7f040006;
+        public static final int ok=0x7f040007;
         public static final int password=0x7f040002;
         public static final int username_or_email=0x7f040001;
     }
