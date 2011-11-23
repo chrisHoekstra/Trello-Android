@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 import com.ch.trello.R;
 import com.ch.trello.model.TrelloModel;
 import com.ch.trello.service.TrelloService;
@@ -39,7 +40,7 @@ public class TrelloController {
         new BoardFetchTask().execute(mBoardId);
     }
 
-    public void addCard(String boardId, String boardListId, String cardName, int position) {
+    public void addCard(Activity context,String boardId, String boardListId, String cardName, int position) {
         AddCardVO addCard = new AddCardVO();
 
         addCard.method = ApiMethodVO.CREATE;
@@ -51,7 +52,7 @@ public class TrelloController {
         addCard.data.attrs.idBoard = boardId;
         addCard.data.attrs.idList = boardListId;
 
-        new AddCardTask().execute(addCard);
+        new AddCardTask(context).execute(addCard);
     }
 
 
@@ -143,6 +144,34 @@ public class TrelloController {
 
     private class AddCardTask extends AsyncTask<AddCardVO, Void, CardVO> {
 
+         Activity context;
+        private ProgressDialog waitDialog;
+
+        public AddCardTask(Activity context) {
+            this.context = context;
+        }
+
+         @Override
+        protected void onPreExecute() {
+            if (waitDialog == null) {
+                waitDialog = new ProgressDialog(context);
+                waitDialog.setIndeterminate(true);
+            }
+
+            waitDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+                public void onCancel(DialogInterface dialog) {
+                    if (AddCardTask.this != null) {
+                        AddCardTask.this.cancel(true);
+                    }
+                    context.finish();
+                }
+            });
+            waitDialog.setTitle(context.getString(R.string.add_card));
+            waitDialog.setMessage(context.getString(R.string.loading));
+            waitDialog.show();
+        }
+
         @Override
         protected CardVO doInBackground(AddCardVO... parameters) {
             CardVO result = null;
@@ -154,8 +183,11 @@ public class TrelloController {
 
         @Override
         protected void onPostExecute(CardVO result) {
+             if (waitDialog != null)
+                waitDialog.dismiss();
             if (result != null) {
                 mModel.cardAdded(result);
+                Toast.makeText(context,R.string.card_added,Toast.LENGTH_SHORT).show();
             }
         }
     }

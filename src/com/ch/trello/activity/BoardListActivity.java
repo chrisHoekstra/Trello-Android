@@ -75,6 +75,7 @@ public class BoardListActivity extends Activity {
             public void onCardAddedEvent(TrelloModel model, CardVO card) {
                 mModel.getCurrentBoard().cards.add(card);
                 populateView();
+                endAddCard();
             }
         };
 
@@ -106,7 +107,7 @@ public class BoardListActivity extends Activity {
         mAddButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mController.addCard(mBoardId, mBoardListId, mAddCardEdit.getText().toString(), 65536);
+                mController.addCard(BoardListActivity.this,mBoardId, mBoardListId, mAddCardEdit.getText().toString(), 65536);
             }
         });
 
