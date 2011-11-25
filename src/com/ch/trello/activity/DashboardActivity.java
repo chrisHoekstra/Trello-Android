@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.ch.trello.BundleKeys;
@@ -15,14 +17,18 @@ import com.ch.trello.adapter.BoardAdapter;
 import com.ch.trello.adapter.OrganizationAdapter;
 import com.ch.trello.controller.TrelloController;
 import com.ch.trello.model.TrelloModel;
+import com.ch.trello.service.Gravatar;
 import com.ch.trello.vo.AllBoardsResultVO;
 import com.ch.trello.vo.BoardVO;
 import com.ch.trello.vo.MemberVO;
 import com.ch.trello.vo.OrganizationVO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DashboardActivity extends Activity {
+    
+    private static String TAG  = DashboardActivity.class.getSimpleName();
 
     // Intent results static definitions
 
@@ -35,6 +41,7 @@ public class DashboardActivity extends Activity {
     private ListView mOrgasList;
     private TextView mFullNameText;
     private TextView mUsernameText;
+    private ImageView mGravatar;
 
     // Models
     private TrelloModel mModel;
@@ -58,6 +65,7 @@ public class DashboardActivity extends Activity {
         mOrgasList = (ListView) findViewById(R.id.orga_list);
         mFullNameText = (TextView) findViewById(R.id.full_name);
         mUsernameText = (TextView) findViewById(R.id.username);
+        mGravatar  = (ImageView) findViewById(R.id.gravatar);
 
         // Instantiate models
         mModel = TrelloModel.getInstance();
@@ -222,6 +230,11 @@ public class DashboardActivity extends Activity {
         }
 
         if (user != null) {
+            try {
+                mGravatar.setImageBitmap(Gravatar.downloadGravatar(user.gravatar));
+            } catch (IOException e) {
+                Log.e(TAG,"error gravatar img");
+            }
             mFullNameText.setText(user.fullName);
             mUsernameText.setText('(' + user.username + ')');
         }
