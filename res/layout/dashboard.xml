@@ -33,6 +33,24 @@
     </LinearLayout>
 
     <TextView
+            android:id="@+id/orga"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dip"
+            android:text="@string/orga"
+            android:textColor="#1A1A1A"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    <ListView
+            android:id="@+id/orga_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#E3E3E3"
+            android:divider="#E3E3E3"
+            android:dividerHeight="0px" />
+
+    <TextView
         android:id="@+id/boards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
