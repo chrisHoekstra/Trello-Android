@@ -18,7 +18,7 @@ import com.ch.trello.vo.CardVO;
 
 import java.util.ArrayList;
 
-public class BoardListActivity extends Activity {
+public class BoardListActivity extends BaseActivity {
 
     // Intent results static definitions
 

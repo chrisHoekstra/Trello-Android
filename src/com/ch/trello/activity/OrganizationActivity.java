@@ -21,7 +21,7 @@ import com.ch.trello.vo.OrganizationVO;
 
 import java.util.ArrayList;
 
-public class OrganizationActivity extends Activity {
+public class OrganizationActivity extends BaseActivity {
 
     // Intent results static definitions
 
@@ -90,21 +90,6 @@ public class OrganizationActivity extends Activity {
         }
     }
 
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            //case R.id.view_item_id : 
-            //    break;
-            default:
-                break;
-        }
-
-        // Return true if you want the click event to stop here, or false
-        // if you want the click even to continue propagating possibly
-        // triggering an onClick event
-        return false;
-    }
 
     @Override
     protected Dialog onCreateDialog(int id) {

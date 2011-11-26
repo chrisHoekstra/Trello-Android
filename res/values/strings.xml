@@ -13,6 +13,8 @@
     <string name="card_added">Card Added</string>
     <string name="login_error">Login Error</string>
     <string name="ok">OK</string>
+    <string name="deconnexionBtn">Deconnexion</string>
+    <string name="exit">Exit</string>
     <string name="loading">Loading...</string>
 
 

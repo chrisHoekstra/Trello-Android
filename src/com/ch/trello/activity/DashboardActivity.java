@@ -3,7 +3,9 @@ package com.ch.trello.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -26,9 +28,11 @@ import com.ch.trello.vo.OrganizationVO;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class DashboardActivity extends Activity {
-    
-    private static String TAG  = DashboardActivity.class.getSimpleName();
+public class DashboardActivity extends BaseActivity {
+
+
+
+    private static String TAG = DashboardActivity.class.getSimpleName();
 
     // Intent results static definitions
 
@@ -65,7 +69,7 @@ public class DashboardActivity extends Activity {
         mOrgasList = (ListView) findViewById(R.id.orga_list);
         mFullNameText = (TextView) findViewById(R.id.full_name);
         mUsernameText = (TextView) findViewById(R.id.username);
-        mGravatar  = (ImageView) findViewById(R.id.gravatar);
+        mGravatar = (ImageView) findViewById(R.id.gravatar);
 
         // Instantiate models
         mModel = TrelloModel.getInstance();
@@ -112,39 +116,6 @@ public class DashboardActivity extends Activity {
             //case ACTIVITY_RESULT_ID :
             //    break;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-
-        MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.menu_id, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            //case R.id.view_item_id : 
-            //    break;
-            default:
-                break;
-        }
-
-        // Return true if you want the click event to stop here, or false
-        // if you want the click even to continue propagating possibly
-        // triggering an onClick event
-        return false;
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo info) {
-        super.onCreateContextMenu(menu, view, info);
-
-        MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.menu_id, menu);
     }
 
     @Override
@@ -233,7 +204,7 @@ public class DashboardActivity extends Activity {
             try {
                 mGravatar.setImageBitmap(Gravatar.downloadGravatar(user.gravatar));
             } catch (IOException e) {
-                Log.e(TAG,"error gravatar img");
+                Log.e(TAG, "error gravatar img");
             }
             mFullNameText.setText(user.fullName);
             mUsernameText.setText('(' + user.username + ')');

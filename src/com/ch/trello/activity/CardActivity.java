@@ -27,7 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class CardActivity extends Activity {
+public class CardActivity extends BaseActivity {
     
     // Intent results static definitions
 

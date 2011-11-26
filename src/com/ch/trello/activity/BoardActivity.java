@@ -23,7 +23,7 @@ import com.ch.trello.vo.BoardListVO;
 import com.ch.trello.vo.BoardResultVO;
 import com.ch.trello.vo.BoardVO;
 
-public class BoardActivity extends Activity {
+public class BoardActivity extends BaseActivity {
     
     // Intent results static definitions
 
