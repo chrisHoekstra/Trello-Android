@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingLeft="10dip"
+              android:paddingBottom="5dip">
+    <TextView
+            android:id="@+id/labelGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#66CC00"
+            android:width="20dip"/>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingLeft="5dip">
+        <TextView
+                android:id="@+id/labelYellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#eee777"
+                android:width="20dip"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingLeft="5dip">
+
+        <TextView
+                android:id="@+id/labelOrange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:background="#FF9900"
+                android:width="20dip"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingLeft="5dip">
+        <TextView
+                android:id="@+id/labelRed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dip"
+                android:background="#F00000"
+                android:width="20dip"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingLeft="5dip">
+        <TextView
+                android:id="@+id/labelBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#123987"
+                android:width="20dip"/>
+    </LinearLayout>
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingLeft="5dip">
+        <TextView
+                android:id="@+id/labelPurple"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#990099"
+                android:width="20dip"/>
+    </LinearLayout>
+
+
+</LinearLayout>

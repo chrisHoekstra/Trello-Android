@@ -17,6 +17,7 @@ import com.ch.trello.vo.BoardVO;
 import com.ch.trello.vo.CardVO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BoardListActivity extends BaseActivity {
 
@@ -266,4 +267,6 @@ public class BoardListActivity extends BaseActivity {
         mAddCardLayout.setVisibility(View.GONE);
         mAddCardButton.setVisibility(View.VISIBLE);
     }
+
+
 }
