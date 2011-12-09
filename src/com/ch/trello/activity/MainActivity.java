@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
         mModel = TrelloModel.getInstance();
         
         // Instantiate controllers
-        mController = TrelloController.getInstance();
+        mController = TrelloController.getInstance(getApplicationContext());
         
         // Create listeners
         mOnLoginCompleteListener = new TrelloModel.OnLoginCompleteListener() {

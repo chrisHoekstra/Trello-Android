@@ -77,7 +77,7 @@ public class BoardListActivity extends Activity {
         mModel = TrelloModel.getInstance();
         
         // Instantiate controllers
-        mController = TrelloController.getInstance();
+        mController = TrelloController.getInstance(getApplicationContext());
         
         // Create listeners
         mOnCardAddedListener = new TrelloModel.OnCardAddedListener() {

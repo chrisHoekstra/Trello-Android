@@ -10,8 +10,8 @@ public class MemberVO {
     public String initials;
     public String status;
     public String gravatar;
-    public PrefsVO prefs;
-    public String isOpenIdAccount; // TODO - boolean?
+    public MemberPrefsVO prefs;
+    public boolean isOpenIdAccount;
     
     public ArrayList<String> idBoards;
     public ArrayList<String> idBoardsPinned;

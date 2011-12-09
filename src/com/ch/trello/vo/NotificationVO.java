@@ -7,7 +7,7 @@ public class NotificationVO {
     public String type;
     public String date;
     public String idMemberCreator;
-    public String isUnread; // TODO - boolean?
+    public boolean isUnread;
     public DataVO data;
     
     public ArrayList<String> idMembers;

@@ -11,4 +11,5 @@ public class BoardResultVO {
     public ArrayList<MemberVO> members;
     public ArrayList<ActionVO> actions;
     public ArrayList<CardVO> cards;
+    public ArrayList<WrapperBoardPrefsVO> boardPreferences;
 }

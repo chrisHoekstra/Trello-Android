@@ -1,9 +1,9 @@
 package com.ch.trello.controller;
 
-import java.util.ArrayList;
-
+import android.content.Context;
 import android.os.AsyncTask;
 
+import com.ch.trello.database.TrelloDb;
 import com.ch.trello.model.TrelloModel;
 import com.ch.trello.service.TrelloService;
 import com.ch.trello.vo.AddCardVO;
@@ -17,9 +17,10 @@ public class TrelloController {
 
     // Singleton stuff
     private static TrelloController controller;
-    public  static TrelloController getInstance() {
+    public  static TrelloController getInstance(Context context) {
         if (controller == null) {
             controller = new TrelloController();
+            controller.mDb = TrelloDb.getInstance(context);
             controller.mModel = TrelloModel.getInstance();
             controller.mService = new TrelloService();
             controller.addListeners();
@@ -28,6 +29,7 @@ public class TrelloController {
     }
 
     // Variables
+    private TrelloDb mDb;
     private TrelloModel mModel;
     private TrelloService mService;
     
@@ -78,9 +80,16 @@ public class TrelloController {
             
             if (mService.login(parameters[0], parameters[1])) {
                 AllBoardsResultVO results = mService.getBoardResults();
-                
                 if (results != null) {
                     mModel.setAllBoardsResult(results);
+
+                    mDb.createOrganizations(results.organizations);
+                    mDb.createBoards(results.boards);                    
+                    mDb.createMembers(results.members);
+                    
+                    // TODO
+                    //mDb.createNotifications(results.notifications);
+                    
                     result = true;
                 }
             }
@@ -103,6 +112,15 @@ public class TrelloController {
             BoardResultVO result = null;
             
             result = mService.getBoard(parameters[0]);
+            
+            for (BoardVO board : result.boards) {
+                if (board._id.equals(parameters[0])) {
+                    mDb.updateBoard(board._id, board);
+                    break;
+                }
+            }
+            
+            mDb.createCards(result.cards);
             
             return result;
         }

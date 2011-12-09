@@ -65,7 +65,7 @@ public class TrelloService {
     private static final String API_APP = "api/app";
     private static final String API_CARD = "api/card";
     
-    private static final Object METHOD_LOGIN = "login";
+    private static final String METHOD_LOGIN = "login";
 
 
     
@@ -264,7 +264,6 @@ public class TrelloService {
         DefaultHttpClient client = null;
 
         try {
-
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             trustStore.load(null, null);
 
