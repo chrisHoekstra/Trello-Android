@@ -90,11 +90,10 @@ public class BoardActivity extends Activity {
         mBoardListsList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
-                BoardListVO boardList = mBoardListAdapter.getItem(position);
-                Intent intent = new Intent(BoardActivity.this, BoardListActivity.class);
+                Intent intent = new Intent(getParent(), BoardListActivity.class);
                 intent.putExtra(BundleKeys.BOARD_ID, mBoardId);
-                intent.putExtra(BundleKeys.BOARD_LIST_ID, boardList._id);
-                startActivity(intent);
+                intent.putExtra(BundleKeys.BOARD_LIST_ID, mBoardListAdapter.getItem(position)._id);
+                ((TabActivityGroup) getParent()).startChildActivity("BoardListActivity", intent);
             }
         });
         
@@ -119,6 +118,11 @@ public class BoardActivity extends Activity {
             //case ACTIVITY_RESULT_ID :
             //    break;
         }
+    }
+    
+    @Override
+    public void onBackPressed() {
+        ((TabActivityGroup)getParent()).onBackPressed();
     }
     
     @Override

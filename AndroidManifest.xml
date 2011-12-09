@@ -10,7 +10,6 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Light" >
-        
         <activity
             android:label="@string/app_name"
             android:name=".activity.MainActivity" >
@@ -19,14 +18,17 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
         </activity>
-        
-        <activity android:name=".activity.DashboardActivity"></activity>
-        <activity android:name=".activity.BoardActivity"></activity>
-        <activity android:name=".activity.BoardListActivity"></activity>
-        <activity android:name=".activity.CardActivity"></activity>
+        <activity android:name=".activity.BoardActivity" />
+        <activity android:name=".activity.BoardActivityGroup" />
+        <activity android:name=".activity.BoardListActivity" />
+        <activity android:name=".activity.CardActivity" />
+        <activity android:name=".activity.DashboardActivity" />
+        <activity android:name=".activity.NotificationsActivity" />
+        <activity android:name=".activity.ProfileActivity" />
+        <activity android:name=".activity.TrelloTabActivity" />
     </application>
 
-	<uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

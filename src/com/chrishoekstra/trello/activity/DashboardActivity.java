@@ -67,10 +67,9 @@ public class DashboardActivity extends Activity {
         mBoardsList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
-                BoardVO board = mBoardAdapter.getItem(position);
-                Intent intent = new Intent(DashboardActivity.this, BoardActivity.class);
-                intent.putExtra(BundleKeys.BOARD_ID, board._id);
-                startActivity(intent);
+                Intent intent = new Intent(getParent(), BoardActivity.class);
+                intent.putExtra(BundleKeys.BOARD_ID, mBoardAdapter.getItem(position)._id);
+                ((TabActivityGroup) getParent()).startChildActivity("BoardActivity", intent);
             }
         });
         
@@ -92,6 +91,11 @@ public class DashboardActivity extends Activity {
             //case ACTIVITY_RESULT_ID :
             //    break;
         }
+    }
+    
+    @Override
+    public void onBackPressed() {
+        ((TabActivityGroup)getParent()).onBackPressed();
     }
     
     @Override

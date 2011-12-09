@@ -96,6 +96,11 @@ public class CardActivity extends Activity {
     }
     
     @Override
+    public void onBackPressed() {
+        ((TabActivityGroup)getParent()).onBackPressed();
+    }
+    
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         

@@ -91,10 +91,9 @@ public class BoardListActivity extends Activity {
         mCardList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
-                CardVO card = mCardAdapter.getItem(position);
-                Intent intent = new Intent(BoardListActivity.this, CardActivity.class);
-                intent.putExtra(BundleKeys.CARD_ID, card._id);
-                startActivity(intent);
+                Intent intent = new Intent(getParent(), CardActivity.class);
+                intent.putExtra(BundleKeys.CARD_ID, mCardAdapter.getItem(position)._id);
+                ((TabActivityGroup) getParent()).startChildActivity("CardActivity", intent);
             }
         });
         
@@ -139,6 +138,11 @@ public class BoardListActivity extends Activity {
             //case ACTIVITY_RESULT_ID :
             //    break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        ((TabActivityGroup)getParent()).onBackPressed();
     }
     
     @Override
