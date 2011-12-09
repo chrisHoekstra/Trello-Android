@@ -139,11 +139,6 @@ public class BoardListActivity extends Activity {
             //    break;
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        ((TabActivityGroup)getParent()).onBackPressed();
-    }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

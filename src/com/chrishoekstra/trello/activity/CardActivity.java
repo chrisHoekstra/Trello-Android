@@ -96,11 +96,6 @@ public class CardActivity extends Activity {
     }
     
     @Override
-    public void onBackPressed() {
-        ((TabActivityGroup)getParent()).onBackPressed();
-    }
-    
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         //inflater.inflate(R.menu.menu_id, menu);

@@ -66,9 +66,9 @@ public class TabActivityGroup extends ActivityGroup {
     }    
     
     @Override
-    public void onBackPressed () {
+    public void onBackPressed() {
         int length = mIdList.size();
-        if (length > 1) {
+        if (length > 0) {
             getLocalActivityManager().getActivity(mIdList.get(length - 1)).finish();
         }
     }
