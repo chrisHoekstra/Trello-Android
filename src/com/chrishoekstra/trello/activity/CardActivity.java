@@ -102,8 +102,6 @@ public class CardActivity extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        
         MenuInflater inflater = getMenuInflater();
         //inflater.inflate(R.menu.menu_id, menu);
         

@@ -147,8 +147,6 @@ public class BoardListActivity extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.board_list_menu, menu);
         

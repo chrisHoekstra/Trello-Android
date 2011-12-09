@@ -7,6 +7,8 @@ import android.app.ActivityGroup;
 import android.app.LocalActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 
 public class TabActivityGroup extends ActivityGroup {
@@ -61,14 +63,23 @@ public class TabActivityGroup extends ActivityGroup {
             mIdList.add(Id);
             setContentView(window.getDecorView());
         }
-    }
+    }    
     
     @Override
     public void onBackPressed () {
         int length = mIdList.size();
         if (length > 1) {
-            Activity current = getLocalActivityManager().getActivity(mIdList.get(length - 1));
-            current.finish();
+            getLocalActivityManager().getActivity(mIdList.get(length - 1)).finish();
         }
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return getLocalActivityManager().getCurrentActivity().onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return getLocalActivityManager().getCurrentActivity().onOptionsItemSelected(item);
     }
 }
