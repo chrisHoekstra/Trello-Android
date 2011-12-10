@@ -43,10 +43,10 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             nameText = (TextView)  convertView.getTag(R.id.name);
         }
 
-        CardVO board = mCards.get(position);
+        CardVO card = mCards.get(position);
         
-        if (board != null) {
-            nameText.setText(board.name);
+        if (card != null) {
+            nameText.setText(card.name);
         }
         
         return convertView;
