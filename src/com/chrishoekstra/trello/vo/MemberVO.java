@@ -11,7 +11,7 @@ public class MemberVO {
     public String status;
     public String gravatar;
     public PrefsVO prefs;
-    public String isOpenIdAccount; // TODO - boolean?
+    public boolean isOpenIdAccount;
     
     public ArrayList<String> idBoards;
     public ArrayList<String> idBoardsPinned;

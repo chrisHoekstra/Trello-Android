@@ -12,6 +12,9 @@ import com.chrishoekstra.trello.vo.ApiMethodVO;
 import com.chrishoekstra.trello.vo.BoardResultVO;
 import com.chrishoekstra.trello.vo.BoardVO;
 import com.chrishoekstra.trello.vo.CardVO;
+import com.chrishoekstra.trello.vo.MemberVO;
+import com.chrishoekstra.trello.vo.NotificationVO;
+import com.chrishoekstra.trello.vo.NotificationsResultVO;
 
 public class TrelloController {
 
@@ -55,7 +58,10 @@ public class TrelloController {
         
         new AddCardTask().execute(addCard);
     }
-    
+
+    public void getNotifications(int count) {
+        new NotificationsFetchTask().execute(count);
+    }
     
     // Private methods
     private void addListeners() {
@@ -81,6 +87,14 @@ public class TrelloController {
                 
                 if (results != null) {
                     mModel.setAllBoardsResult(results);
+                    
+                    for (MemberVO member : results.members) {
+                        if (member._id.equals(results.idMember)) {
+                            mModel.setUser(member);
+                            break;
+                        }
+                    }
+                    
                     result = true;
                 }
             }
@@ -111,6 +125,25 @@ public class TrelloController {
         protected void onPostExecute(BoardResultVO result) {
             if (result != null) {
                 mModel.boardReceived(result);
+            }
+        }
+    }
+    
+    private class NotificationsFetchTask extends AsyncTask<Integer, Void, NotificationsResultVO> {
+        
+        @Override
+        protected NotificationsResultVO doInBackground(Integer... counts) {
+            NotificationsResultVO result = null;
+            
+            result = mService.getNotifications(mModel.getUser().username, counts[0]);
+            
+            return result;
+        }
+        
+        @Override
+        protected void onPostExecute(NotificationsResultVO result) {
+            if (result != null) {
+                mModel.notificationsReceived(result);
             }
         }
     }

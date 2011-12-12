@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="libs/apache-mime4j-core-0.7.jar"/>
 	<classpathentry kind="lib" path="libs/jackson-all-1.8.5.jar"/>
+	<classpathentry kind="lib" path="libs/joda-time-2.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

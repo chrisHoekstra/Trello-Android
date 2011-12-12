@@ -2,8 +2,9 @@ package com.chrishoekstra.trello.vo;
 
 import java.util.ArrayList;
 
-public class BoardResultVO {
+public class NotificationsResultVO {
     public long now;
+    public boolean isMore;
     public String idMember;
     
     public ArrayList<BoardVO> boards;

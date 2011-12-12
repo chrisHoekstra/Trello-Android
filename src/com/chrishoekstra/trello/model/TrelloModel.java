@@ -1,12 +1,12 @@
 package com.chrishoekstra.trello.model;
 
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.chrishoekstra.trello.vo.AllBoardsResultVO;
 import com.chrishoekstra.trello.vo.BoardResultVO;
-import com.chrishoekstra.trello.vo.BoardVO;
 import com.chrishoekstra.trello.vo.CardVO;
+import com.chrishoekstra.trello.vo.MemberVO;
+import com.chrishoekstra.trello.vo.NotificationsResultVO;
 
 public class TrelloModel {
     
@@ -29,15 +29,20 @@ public class TrelloModel {
         void onBoardReceveidEvent(TrelloModel model, BoardResultVO result);
     }
 
+    public interface OnNotificationsReceivedListener {
+        void onNotificationsReceivedEvent(TrelloModel model, NotificationsResultVO result);
+    }
+
     public interface OnCardAddedListener {
         void onCardAddedEvent(TrelloModel model, CardVO card);
     }
     
     
     // Listener Arrays
-    private final ConcurrentLinkedQueue<OnLoginCompleteListener> onLoginCompleteListeners = new ConcurrentLinkedQueue<OnLoginCompleteListener>();
-    private final ConcurrentLinkedQueue<OnBoardReceivedListener> onBoardReceivedListeners = new ConcurrentLinkedQueue<OnBoardReceivedListener>();
-    private final ConcurrentLinkedQueue<OnCardAddedListener> onCardAddedListeners         = new ConcurrentLinkedQueue<OnCardAddedListener>();
+    private final ConcurrentLinkedQueue<OnLoginCompleteListener> onLoginCompleteListeners                 = new ConcurrentLinkedQueue<OnLoginCompleteListener>();
+    private final ConcurrentLinkedQueue<OnBoardReceivedListener> onBoardReceivedListeners                 = new ConcurrentLinkedQueue<OnBoardReceivedListener>();
+    private final ConcurrentLinkedQueue<OnNotificationsReceivedListener> onNotificationsReceivedListeners = new ConcurrentLinkedQueue<OnNotificationsReceivedListener>();
+    private final ConcurrentLinkedQueue<OnCardAddedListener> onCardAddedListeners                         = new ConcurrentLinkedQueue<OnCardAddedListener>();
     
     
     // Alert Listeners
@@ -49,6 +54,11 @@ public class TrelloModel {
     private final void alertOnBoardReceivedListeners(BoardResultVO result) {
         for (final OnBoardReceivedListener listener : onBoardReceivedListeners)
             listener.onBoardReceveidEvent(this, result);
+    }
+
+    private final void alertOnNotificationsReceivedListeners(NotificationsResultVO result) {
+        for (final OnNotificationsReceivedListener listener : onNotificationsReceivedListeners)
+            listener.onNotificationsReceivedEvent(this, result);
     }
     
     private final void alertOnCardAddedListeners(CardVO card) {
@@ -70,6 +80,12 @@ public class TrelloModel {
         }
     }
 
+    public final void addListener(OnNotificationsReceivedListener listener) {
+        synchronized (onNotificationsReceivedListeners) {
+            onNotificationsReceivedListeners.add(listener);
+        }
+    }
+
     public final void addListener(OnCardAddedListener listener) {
         synchronized (onCardAddedListeners) {
             onCardAddedListeners.add(listener);
@@ -87,6 +103,12 @@ public class TrelloModel {
     public final void removeListener(OnBoardReceivedListener listener) {
         synchronized (onBoardReceivedListeners) {
             onBoardReceivedListeners.remove(listener);
+        }
+    }
+
+    public final void removeListener(OnNotificationsReceivedListener listener) {
+        synchronized (onNotificationsReceivedListeners) {
+            onNotificationsReceivedListeners.remove(listener);
         }
     }
 
@@ -117,14 +139,27 @@ public class TrelloModel {
     public void boardReceived(BoardResultVO result) {
         alertOnBoardReceivedListeners(result);
     }
+
+    public void notificationsReceived(NotificationsResultVO result) {
+        alertOnNotificationsReceivedListeners(result);
+    }
     
     public void cardAdded(CardVO card) {
         alertOnCardAddedListeners(card);
+    }
+
+    public void setUser(MemberVO user) {
+        mUser = user;
+    }
+    
+    public MemberVO getUser() {
+        return mUser;
     }
     
     // Variables
     private AllBoardsResultVO mAllBoardsResult;
     private BoardResultVO mCurrentBoard;
+    private MemberVO mUser;
     
     // Model functions
     public void loginComplete() {

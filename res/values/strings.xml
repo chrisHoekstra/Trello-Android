@@ -7,5 +7,8 @@
     <string name="login">Login</string>
     <string name="boards">Boards</string>
     <string name="add_card">Add Card</string>
-	<string name="logging_in">Logging in</string>
+    <string name="logging_in">Logging in</string>
+    <string name="see_all_notifications">See All Notifications</string>
+    <string name="load_more_notifications">Load More Notifications</string>
+
 </resources>

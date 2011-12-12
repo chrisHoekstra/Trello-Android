@@ -55,6 +55,8 @@ import com.chrishoekstra.trello.vo.AllBoardsResultVO;
 import com.chrishoekstra.trello.vo.BoardResultVO;
 import com.chrishoekstra.trello.vo.CardVO;
 import com.chrishoekstra.trello.vo.LoginResultsVO;
+import com.chrishoekstra.trello.vo.NotificationVO;
+import com.chrishoekstra.trello.vo.NotificationsResultVO;
 
 public class TrelloService {
     private static final Object USER_AGENT_STRING = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:5.0.1) Gecko/20100101 Firefox/5.0.1";
@@ -62,10 +64,12 @@ public class TrelloService {
     private static final String TRELLO_URL = "https://trello.com/";
     private static final String ME_BOARDS = "data/me/boards";
     private static final String DATA_BOARD = "data/board";
+    private static final String DATA = "data";
     private static final String API_APP = "api/app";
     private static final String API_CARD = "api/card";
     
     private static final Object METHOD_LOGIN = "login";
+
 
 
     
@@ -226,6 +230,36 @@ public class TrelloService {
         }
         
         return result;
+    }
+    
+    public NotificationsResultVO getNotifications(String username, Integer counts) {
+        NotificationsResultVO results = null;
+        String url = TRELLO_URL + DATA + "/" + username + "/notifications";
+        
+        if (counts != null) {
+            url += "?skip=" + counts;
+        }
+        
+        HttpGet httpGet = new HttpGet(url);
+        HttpClient httpClient = getHttpClient();
+        
+        try {
+            httpGet.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
+
+            HttpResponse response = httpClient.execute(httpGet, mContext);
+            
+            if (response != null) {
+                results = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), NotificationsResultVO.class);
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return results;
     }
     
     public class CustomSSLSocketFactory extends SSLSocketFactory {
