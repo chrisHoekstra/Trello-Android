@@ -18,6 +18,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import android.util.Log;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
@@ -133,7 +134,8 @@ public class TrelloService {
             
             if (response != null) {
                 LoginResultsVO loginResults = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), LoginResultsVO.class);
-                results = true;
+               if(loginResults.idMember != null && loginResults.token !=null && loginResults.username != null  ){
+                results = true;    }
             }
 
         } catch (ClientProtocolException e) {

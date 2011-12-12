@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#E3E3E3"
+    android:orientation="vertical"
+    android:padding="10dip" >
+
+    <TextView
+           android:id="@+id/orga_list"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginBottom="5dip"
+           android:text="Loading board..."
+           android:textColor="#1A1A1A"
+           android:textSize="16sp"
+           android:textStyle="bold" />
+
+       <ListView
+           android:id="@+id/board_list"
+           android:layout_width="fill_parent"
+           android:layout_height="fill_parent"
+           android:divider="#E3E3E3"
+           android:dividerHeight="0px" />
+
+
+</LinearLayout>

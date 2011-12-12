@@ -54,7 +54,6 @@ public class TabActivityGroup extends ActivityGroup {
      * Starts an Activity as a child Activity to this.
      * @param Id Unique identifier of the activity to be started.
      * @param intent The Intent describing the activity to be started.
-     * @throws android.content.ActivityNotFoundException.
      */
     public void startChildActivity(String Id, Intent intent) {
         Window window = getLocalActivityManager().startActivity(Id, intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));

@@ -14,8 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.BundleKeys;
+import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.adapter.BoardListAdapter;
 import com.chrishoekstra.trello.controller.TrelloController;
 import com.chrishoekstra.trello.model.TrelloModel;
@@ -23,7 +23,7 @@ import com.chrishoekstra.trello.vo.BoardListVO;
 import com.chrishoekstra.trello.vo.BoardResultVO;
 import com.chrishoekstra.trello.vo.BoardVO;
 
-public class BoardActivity extends Activity {
+public class BoardActivity extends BaseActivity {
     
     // Intent results static definitions
 

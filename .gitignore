@@ -1,3 +1,9 @@
 gen
 /bin
 /bin/*
+out
+
+# Idea files project
+*.iws
+*.iml
+*.ipr

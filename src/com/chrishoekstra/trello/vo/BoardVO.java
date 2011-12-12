@@ -8,6 +8,7 @@ public class BoardVO {
     public PrefsVO prefs;
     public boolean closed;
     public int nActionsSinceLastView;
+    public String idOrganization;
     public LabelNamesVO labelNames;
     
     public ArrayList<BoardListVO> lists;
