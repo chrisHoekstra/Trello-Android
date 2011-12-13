@@ -1,6 +1,8 @@
 package com.chrishoekstra.trello.adapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,7 +15,20 @@ import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.vo.CardVO;
 
 public class CardAdapter extends ArrayAdapter<CardVO> {
-
+    
+    static class ViewHolder {
+        protected TextView nameText;
+        
+        protected HashMap<String, View> labels;
+        
+        protected View greenLabel;
+        protected View yellowLabel;
+        protected View orangeLabel;
+        protected View redLabel;
+        protected View purpleLabel;
+        protected View blueLabel;
+    }
+    
     public ArrayList<CardVO> mCards;
     private LayoutInflater mInflater;
     
@@ -31,22 +46,40 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
     
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        TextView nameText;
+        ViewHolder holder;
         
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.card_row, null);
             
-            nameText = (TextView)  convertView.findViewById(R.id.name);
+            holder = new ViewHolder();
             
-            convertView.setTag(R.id.name, nameText);
+            holder.nameText = (TextView) convertView.findViewById(R.id.name);
+            
+            holder.labels = new HashMap<String, View>();
+            holder.labels.put(CardVO.GREEN,  convertView.findViewById(R.id.green_label));
+            holder.labels.put(CardVO.YELLOW, convertView.findViewById(R.id.yellow_label));
+            holder.labels.put(CardVO.ORANGE, convertView.findViewById(R.id.orange_label));
+            holder.labels.put(CardVO.RED,    convertView.findViewById(R.id.red_label));
+            holder.labels.put(CardVO.PURPLE, convertView.findViewById(R.id.purple_label));
+            holder.labels.put(CardVO.BLUE,   convertView.findViewById(R.id.blue_label));
+            
+            convertView.setTag(holder);
         } else {
-            nameText = (TextView)  convertView.getTag(R.id.name);
+            holder = (ViewHolder) convertView.getTag();
         }
 
+        for (Entry<String, View> labelEntry : holder.labels.entrySet()) {
+            labelEntry.getValue().setVisibility(View.GONE);
+        }
+        
         CardVO card = mCards.get(position);
         
         if (card != null) {
-            nameText.setText(card.name);
+            holder.nameText.setText(card.name);
+            
+            for (String label : card.labels) {
+                holder.labels.get(label).setVisibility(View.VISIBLE);
+            }
         }
         
         return convertView;

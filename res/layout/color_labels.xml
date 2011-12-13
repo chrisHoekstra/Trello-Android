@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignTop="@+id/name"
+    android:layout_marginLeft="10dip"
+    android:layout_marginTop="1dip"
+    android:orientation="horizontal" >
+
+    <View
+        android:id="@+id/green_label"
+        android:layout_width="40dip"
+        android:layout_height="6dip"
+        android:background="#FF00C246" />
+
+    <View
+        android:id="@+id/yellow_label"
+        android:layout_width="40dip"
+        android:layout_height="6dip"
+        android:layout_marginLeft="4dip"
+        android:background="#FFD7D55D" />
+
+    <View
+        android:id="@+id/orange_label"
+        android:layout_width="40dip"
+        android:layout_height="6dip"
+        android:layout_marginLeft="4dip"
+        android:background="#FFDF994D" />
+
+    <View
+        android:id="@+id/red_label"
+        android:layout_width="40dip"
+        android:layout_height="6dip"
+        android:layout_marginLeft="4dip"
+        android:background="#FFCF3138" />
+
+    <View
+        android:id="@+id/purple_label"
+        android:layout_width="40dip"
+        android:layout_height="6dip"
+        android:layout_marginLeft="4dip"
+        android:background="#FF8E2FB6" />
+
+    <View
+        android:id="@+id/blue_label"
+        android:layout_width="40dip"
+        android:layout_height="6dip"
+        android:layout_marginLeft="4dip"
+        android:background="#FF3169C5" />
+
+</LinearLayout>
