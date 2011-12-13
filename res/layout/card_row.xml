@@ -22,26 +22,60 @@
     <include
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="1dip"
         layout="@layout/color_labels" />
 
     <LinearLayout
-        android:id="@+id/descriptionBadgeLayout"
         android:layout_width="wrap_content"
-        android:layout_height="20dip"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/name"
-        android:layout_marginTop="5dip"
-        android:background="@drawable/badge_background"
-        android:paddingLeft="5dip"
-        android:paddingRight="5dip" >
+        android:layout_marginTop="5dip" >
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/descriptionBadgeLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="1dip"
-            android:text="D"
-            android:textColor="#FFFFFF" />
+            android:layout_height="20dip"
+            android:background="@drawable/badge_background"
+            android:paddingLeft="5dip"
+            android:paddingRight="5dip" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="1dip"
+                android:text="D"
+                android:textColor="#FFFFFF" />
+            
+        </LinearLayout>
+            
+        <LinearLayout
+            android:id="@+id/commentBadgeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="20dip"
+            android:background="@drawable/badge_background"
+            android:paddingLeft="5dip"
+            android:paddingRight="5dip"
+            android:layout_marginLeft="4dip" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="1dip"
+                android:paddingRight="3dip"
+                android:text="C"
+                android:textColor="#FFFFFF" />
+            
+            <TextView
+                android:id="@+id/commentBadgeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="1dip"
+                android:text="1"
+                android:textColor="#FFFFFF" />
+            
+        </LinearLayout>
         
     </LinearLayout>
 
