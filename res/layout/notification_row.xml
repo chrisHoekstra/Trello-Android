@@ -5,13 +5,10 @@
     android:background="#FFE6E6E6"
     android:padding="10dip" >
 
-    <ImageView
+    <include
         android:id="@+id/gravatar"
-        android:layout_width="30dip"
-        android:layout_height="30dip"
         android:layout_alignParentLeft="true"
-        android:scaleType="fitXY"
-        android:src="@android:drawable/ic_menu_crop" />
+        layout="@layout/gravatar_icon" />
 
     <TextView
         android:id="@+id/notification_text"
