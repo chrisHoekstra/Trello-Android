@@ -1,183 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/list_item_background"
-    android:orientation="vertical"
-    android:paddingBottom="0dip"
-    android:paddingLeft="10dip"
-    android:paddingRight="10dip"
-    android:paddingTop="0dip" >
+    android:layout_height="wrap_content"
+    android:background="#00FFFFFF" >
 
-    <TextView
-        android:id="@+id/name"
+    <RelativeLayout
+        android:id="@+id/card"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingRight="15dip"
-        android:paddingTop="10dip"
-        android:text="This is a really long description of the item so I can see it wrap nicely."
-        android:textColor="#1A1A1A"
-        android:textSize="16sp" />
-
-    <include
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        layout="@layout/color_labels" />
-
-    <LinearLayout
-        android:id="@+id/voteBadgeLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="20dip"
-        android:layout_below="@+id/name"
-        android:background="@drawable/badge_background"
-        android:paddingLeft="5dip"
-        android:paddingRight="5dip"
-        android:layout_marginTop="2dip" >
+        android:layout_margin="2dip"
+        android:background="@drawable/list_item_background"
+        android:orientation="vertical"
+        android:paddingBottom="10dip"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip"
+        android:paddingTop="0dip" >
 
         <TextView
-            android:id="@+id/voteBadgeCount"
+            android:id="@+id/name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="15dip"
+            android:paddingTop="10dip"
+            android:text="This is a really long description of the item so I can see it wrap nicely."
+            android:textColor="#1A1A1A"
+            android:textSize="16sp" />
+
+        <include
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            layout="@layout/color_labels" />
+
+        <LinearLayout
+            android:id="@+id/voteBadgeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="20dip"
+            android:layout_below="@+id/name"
+            android:layout_marginTop="2dip"
+            android:background="@drawable/badge_background"
+            android:paddingLeft="5dip"
+            android:paddingRight="5dip" >
+
+            <TextView
+                android:id="@+id/voteBadgeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="1dip"
+                android:text="1 vote"
+                android:textColor="#FF5F5F5F" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingTop="1dip"
-            android:text="1 vote"
-            android:textColor="#FF5F5F5F" />
-    </LinearLayout>
+            android:layout_below="@+id/voteBadgeLayout"
+            android:layout_marginTop="5dip" >
+
+            <LinearLayout
+                android:id="@+id/descriptionBadgeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="20dip"
+                android:background="@drawable/badge_background"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="1dip"
+                    android:text="D"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/commentBadgeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="20dip"
+                android:layout_marginLeft="4dip"
+                android:background="@drawable/badge_background"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingRight="3dip"
+                    android:paddingTop="1dip"
+                    android:text="C"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/commentBadgeCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="1dip"
+                    android:text="1"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/attachmentBadgeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="20dip"
+                android:layout_marginLeft="4dip"
+                android:background="@drawable/badge_background"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingRight="3dip"
+                    android:paddingTop="1dip"
+                    android:text="A"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/attachmentBadgeCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="1dip"
+                    android:text="1"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/checkItemBadgeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="20dip"
+                android:layout_marginLeft="4dip"
+                android:background="@drawable/badge_background"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingRight="3dip"
+                    android:paddingTop="1dip"
+                    android:text="H"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/checkItemBadgeCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="1dip"
+                    android:text="1/3"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dueDateBadgeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="20dip"
+                android:layout_marginLeft="4dip"
+                android:background="@drawable/badge_background"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingRight="3dip"
+                    android:paddingTop="1dip"
+                    android:text="T"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/dueDateBadgeTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="1dip"
+                    android:text="Jan 1"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/gravatar_icons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/voteBadgeLayout"
-        android:layout_marginTop="5dip" >
+        android:layout_alignBottom="@+id/card"
+        android:layout_alignRight="@+id/card"
+        android:layout_marginRight="-2dip"
+        android:layout_marginBottom="-2dip"
+        android:orientation="horizontal" >
 
-        <LinearLayout
-            android:id="@+id/descriptionBadgeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="20dip"
-            android:background="@drawable/badge_background"
-            android:paddingLeft="5dip"
-            android:paddingRight="5dip" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="1dip"
-                android:text="D"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/commentBadgeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="20dip"
-            android:layout_marginLeft="4dip"
-            android:background="@drawable/badge_background"
-            android:paddingLeft="5dip"
-            android:paddingRight="5dip" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingRight="3dip"
-                android:paddingTop="1dip"
-                android:text="C"
-                android:textColor="#FFFFFF" />
-
-            <TextView
-                android:id="@+id/commentBadgeCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="1dip"
-                android:text="1"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/attachmentBadgeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="20dip"
-            android:layout_marginLeft="4dip"
-            android:background="@drawable/badge_background"
-            android:paddingLeft="5dip"
-            android:paddingRight="5dip" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingRight="3dip"
-                android:paddingTop="1dip"
-                android:text="A"
-                android:textColor="#FFFFFF" />
-
-            <TextView
-                android:id="@+id/attachmentBadgeCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="1dip"
-                android:text="1"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/checkItemBadgeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="20dip"
-            android:layout_marginLeft="4dip"
-            android:background="@drawable/badge_background"
-            android:paddingLeft="5dip"
-            android:paddingRight="5dip" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingRight="3dip"
-                android:paddingTop="1dip"
-                android:text="H"
-                android:textColor="#FFFFFF" />
-
-            <TextView
-                android:id="@+id/checkItemBadgeCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="1dip"
-                android:text="1/3"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
-        
-        <LinearLayout
-            android:id="@+id/dueDateBadgeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="20dip"
-            android:layout_marginLeft="4dip"
-            android:background="@drawable/badge_background"
-            android:paddingLeft="5dip"
-            android:paddingRight="5dip" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingRight="3dip"
-                android:paddingTop="1dip"
-                android:text="T"
-                android:textColor="#FFFFFF" />
-
-            <TextView
-                android:id="@+id/dueDateBadgeTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="1dip"
-                android:text="Jan 1"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
+        <include
+            android:id="@+id/gravatar"
+            layout="@layout/gravatar_icon" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -42,6 +42,8 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
         
         protected LinearLayout dueDateBadge;
         protected TextView     dueDateBadgeTime;
+        
+        protected LinearLayout gravatarIcons;
     }
     
     public ArrayList<CardVO> mCards;
@@ -104,6 +106,8 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             holder.dueDateBadge      = (LinearLayout) convertView.findViewById(R.id.dueDateBadgeLayout);
             holder.dueDateBadgeTime = (TextView)     convertView.findViewById(R.id.dueDateBadgeTime);
             
+            holder.gravatarIcons = (LinearLayout) convertView.findViewById(R.id.gravatar_icons);
+            
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -140,6 +144,10 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             holder.dueDateBadge.setVisibility(card.badges.due != "" ? View.VISIBLE : View.GONE);
             holder.dueDateBadgeTime.setText(card.badges.due != "" ? mDateFomat.format(mDateTimeFormatter.parseDateTime(card.badges.due).toDate()) : "");
 
+            for (String id : card.idMembers) {
+                View gravatar = mInflater.inflate(R.id.gravatar, holder.gravatarIcons); 
+                holder.gravatarIcons.addView(gravatar);
+            }
         }
         
         return convertView;
