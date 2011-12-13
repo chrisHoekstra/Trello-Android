@@ -1,8 +1,12 @@
 package com.chrishoekstra.trello.adapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -35,10 +39,15 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
         
         protected LinearLayout voteBadge;
         protected TextView     voteBadgeCount;
+        
+        protected LinearLayout dueDateBadge;
+        protected TextView     dueDateBadgeTime;
     }
     
     public ArrayList<CardVO> mCards;
     private LayoutInflater mInflater;
+    private SimpleDateFormat mDateFomat;
+    private DateTimeFormatter mDateTimeFormatter;
     private String mVoteString;
     private String mVotesString;
     
@@ -46,6 +55,8 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
         super(context, textViewResourceId, cards);
 
         mInflater = LayoutInflater.from(context);
+        mDateFomat = new SimpleDateFormat("MMM dd");
+        mDateTimeFormatter = ISODateTimeFormat.dateTime();
         mCards = cards;
         
         mVoteString  = context.getResources().getString(R.string.vote);
@@ -89,6 +100,9 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
 
             holder.voteBadge      = (LinearLayout) convertView.findViewById(R.id.voteBadgeLayout);
             holder.voteBadgeCount = (TextView)     convertView.findViewById(R.id.voteBadgeCount);
+
+            holder.dueDateBadge      = (LinearLayout) convertView.findViewById(R.id.dueDateBadgeLayout);
+            holder.dueDateBadgeTime = (TextView)     convertView.findViewById(R.id.dueDateBadgeTime);
             
             convertView.setTag(holder);
         } else {
@@ -122,6 +136,10 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             holder.voteBadge.setVisibility(card.idMembersVoted.size() > 0 ? View.VISIBLE : View.GONE);
             holder.voteBadgeCount.setText(card.idMembersVoted.size() + " " + 
                     (card.idMembersVoted.size() > 1 ? mVotesString : mVoteString));
+            
+            holder.dueDateBadge.setVisibility(card.badges.due != "" ? View.VISIBLE : View.GONE);
+            holder.dueDateBadgeTime.setText(card.badges.due != "" ? mDateFomat.format(mDateTimeFormatter.parseDateTime(card.badges.due).toDate()) : "");
+
         }
         
         return convertView;
