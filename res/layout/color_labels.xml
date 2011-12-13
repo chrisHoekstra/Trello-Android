@@ -4,8 +4,6 @@
     android:layout_height="wrap_content"
     android:layout_alignParentLeft="true"
     android:layout_alignTop="@+id/name"
-    android:layout_marginLeft="10dip"
-    android:layout_marginTop="1dip"
     android:orientation="horizontal" >
 
     <View

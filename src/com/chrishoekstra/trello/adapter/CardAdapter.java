@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chrishoekstra.trello.R;
@@ -21,12 +22,7 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
         
         protected HashMap<String, View> labels;
         
-        protected View greenLabel;
-        protected View yellowLabel;
-        protected View orangeLabel;
-        protected View redLabel;
-        protected View purpleLabel;
-        protected View blueLabel;
+        protected LinearLayout descriptionBadge;
     }
     
     public ArrayList<CardVO> mCards;
@@ -63,6 +59,8 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             holder.labels.put(CardVO.PURPLE, convertView.findViewById(R.id.purple_label));
             holder.labels.put(CardVO.BLUE,   convertView.findViewById(R.id.blue_label));
             
+            holder.descriptionBadge = (LinearLayout) convertView.findViewById(R.id.descriptionBadgeLayout);
+            
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -80,6 +78,8 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             for (String label : card.labels) {
                 holder.labels.get(label).setVisibility(View.VISIBLE);
             }
+            
+            holder.descriptionBadge.setVisibility(card.badges.description ? View.VISIBLE : View.GONE);
         }
         
         return convertView;
