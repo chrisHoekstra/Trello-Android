@@ -32,16 +32,24 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
 
         protected LinearLayout checkItemBadge;
         protected TextView     checkItemBadgeCount;
+        
+        protected LinearLayout voteBadge;
+        protected TextView     voteBadgeCount;
     }
     
     public ArrayList<CardVO> mCards;
     private LayoutInflater mInflater;
+    private String mVoteString;
+    private String mVotesString;
     
     public CardAdapter(Context context, int textViewResourceId, ArrayList<CardVO> cards) {
         super(context, textViewResourceId, cards);
 
         mInflater = LayoutInflater.from(context);
         mCards = cards;
+        
+        mVoteString  = context.getResources().getString(R.string.vote);
+        mVotesString = context.getResources().getString(R.string.votes);
     }
     
     public void updateCards(ArrayList<CardVO> cards) {
@@ -78,6 +86,9 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
 
             holder.checkItemBadge      = (LinearLayout) convertView.findViewById(R.id.checkItemBadgeLayout);
             holder.checkItemBadgeCount = (TextView)     convertView.findViewById(R.id.checkItemBadgeCount);
+
+            holder.voteBadge      = (LinearLayout) convertView.findViewById(R.id.voteBadgeLayout);
+            holder.voteBadgeCount = (TextView)     convertView.findViewById(R.id.voteBadgeCount);
             
             convertView.setTag(holder);
         } else {
@@ -107,7 +118,10 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
 
             holder.checkItemBadge.setVisibility(card.badges.checkItems > 0 ? View.VISIBLE : View.GONE);
             holder.checkItemBadgeCount.setText(card.badges.checkItemsChecked + "/" + card.badges.checkItems);
-            
+
+            holder.voteBadge.setVisibility(card.idMembersVoted.size() > 0 ? View.VISIBLE : View.GONE);
+            holder.voteBadgeCount.setText(card.idMembersVoted.size() + " " + 
+                    (card.idMembersVoted.size() > 1 ? mVotesString : mVoteString));
         }
         
         return convertView;
