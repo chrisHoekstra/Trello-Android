@@ -77,6 +77,34 @@
             
         </LinearLayout>
         
+        <LinearLayout
+            android:id="@+id/attachmentBadgeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="20dip"
+            android:background="@drawable/badge_background"
+            android:paddingLeft="5dip"
+            android:paddingRight="5dip"
+            android:layout_marginLeft="4dip" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="1dip"
+                android:paddingRight="3dip"
+                android:text="A"
+                android:textColor="#FFFFFF" />
+            
+            <TextView
+                android:id="@+id/attachmentBadgeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="1dip"
+                android:text="1"
+                android:textColor="#FFFFFF" />
+            
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

@@ -26,6 +26,9 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
 
         protected LinearLayout commentBadge;
         protected TextView     commentBadgeCount;
+        
+        protected LinearLayout attachmentBadge;
+        protected TextView     attachmentBadgeCount;
     }
     
     public ArrayList<CardVO> mCards;
@@ -66,6 +69,9 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             
             holder.commentBadge      = (LinearLayout) convertView.findViewById(R.id.commentBadgeLayout);
             holder.commentBadgeCount = (TextView)     convertView.findViewById(R.id.commentBadgeCount);
+
+            holder.attachmentBadge      = (LinearLayout) convertView.findViewById(R.id.attachmentBadgeLayout);
+            holder.attachmentBadgeCount = (TextView)     convertView.findViewById(R.id.attachmentBadgeCount);
             
             convertView.setTag(holder);
         } else {
@@ -86,8 +92,12 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             }
             
             holder.descriptionBadge.setVisibility(card.badges.description ? View.VISIBLE : View.GONE);
+            
             holder.commentBadge.setVisibility(card.badges.comments > 0 ? View.VISIBLE : View.GONE);
             holder.commentBadgeCount.setText(card.badges.comments);
+            
+            holder.attachmentBadge.setVisibility(card.badges.attachments > 0 ? View.VISIBLE : View.GONE);
+            holder.attachmentBadgeCount.setText(card.badges.attachments);
         }
         
         return convertView;
