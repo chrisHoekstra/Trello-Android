@@ -187,7 +187,7 @@ public class BoardActivity extends Activity {
         
         //new PasscodeCheckTask(TemplateActivity.this.getApplicationContext(), TemplateActivity.this).execute();
     }
-
+    
     @Override
     public void onDestroy() {
         super.onDestroy();

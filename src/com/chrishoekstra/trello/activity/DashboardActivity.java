@@ -14,13 +14,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.BundleKeys;
+import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.adapter.BoardAdapter;
 import com.chrishoekstra.trello.controller.TrelloController;
 import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.vo.AllBoardsResultVO;
-import com.chrishoekstra.trello.vo.BoardVO;
 import com.chrishoekstra.trello.vo.MemberVO;
 
 public class DashboardActivity extends Activity {

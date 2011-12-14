@@ -88,14 +88,16 @@ public class TrelloController {
                 if (results != null) {
                     mModel.setAllBoardsResult(results);
                     
-                    for (MemberVO member : results.members) {
-                        if (member._id.equals(results.idMember)) {
-                            mModel.setUser(member);
-                            break;
+                    if (results.members != null) {   
+                        for (MemberVO member : results.members) {
+                            if (member._id.equals(results.idMember)) {
+                                mModel.setUser(member);
+                                break;
+                            }
                         }
+                        
+                        result = true;
                     }
-                    
-                    result = true;
                 }
             }
             
