@@ -35,7 +35,7 @@ public class Utils {
     }
     
     static {
-        mSimpleDateFormat = new SimpleDateFormat("MM/dd/YYYY");
+        mSimpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
         mDateTimeFormatter = ISODateTimeFormat.dateTime();
         
         mNewsFormattings = new HashMap<String, NewsFormatFunction>();
