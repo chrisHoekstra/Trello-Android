@@ -246,7 +246,7 @@ public class BoardListActivity extends Activity {
         
         filteredCards.trimToSize();
 
-        mCardAdapter = new CardAdapter(this, R.id.name, filteredCards);
+        mCardAdapter = new CardAdapter(this, R.id.name, filteredCards, mModel);
         mCardList.setAdapter(mCardAdapter);
         
         for (BoardVO board : mModel.getCurrentBoard().boards) {

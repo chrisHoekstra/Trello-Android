@@ -10,6 +10,7 @@ public class CardVO {
     public static final String PURPLE = "purple";
     public static final String BLUE   = "blue";
     
+    public String id;
     public String _id;
     public String name;
     public String desc;

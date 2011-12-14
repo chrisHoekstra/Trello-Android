@@ -1,11 +1,13 @@
 package com.chrishoekstra.trello.model;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.chrishoekstra.trello.vo.AllBoardsResultVO;
 import com.chrishoekstra.trello.vo.BoardResultVO;
 import com.chrishoekstra.trello.vo.CardVO;
 import com.chrishoekstra.trello.vo.MemberVO;
+import com.chrishoekstra.trello.vo.NotificationVO;
 import com.chrishoekstra.trello.vo.NotificationsResultVO;
 
 public class TrelloModel {
@@ -15,6 +17,7 @@ public class TrelloModel {
     public  static TrelloModel getInstance() {
         if (model == null) {
             model = new TrelloModel();
+            model.mCardNotifications = new HashMap<String, Integer>();
         }
         return model;
     }
@@ -126,6 +129,18 @@ public class TrelloModel {
     
     public void setAllBoardsResult(AllBoardsResultVO value) {
         mAllBoardsResult = value;
+        
+        for (NotificationVO notification : value.notifications) {
+            if (notification.isUnread && (notification.data.card != null)) {
+                int count = 1;
+                
+                if (mCardNotifications.containsKey(notification.data.card.id)) {
+                    count += mCardNotifications.get(notification.data.card.id);
+                }
+                
+                mCardNotifications.put(notification.data.card.id, count);
+            }
+        }
     }
     
     public BoardResultVO getCurrentBoard() {
@@ -156,10 +171,19 @@ public class TrelloModel {
         return mUser;
     }
     
+    public int getNotificationCount(String idCard) {
+        if (mCardNotifications.containsKey(idCard)) {
+            return mCardNotifications.get(idCard);
+        } else {
+            return 0;
+        }
+    }
+    
     // Variables
     private AllBoardsResultVO mAllBoardsResult;
     private BoardResultVO mCurrentBoard;
     private MemberVO mUser;
+    private HashMap<String, Integer> mCardNotifications;
     
     // Model functions
     public void loginComplete() {

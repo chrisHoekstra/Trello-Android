@@ -201,6 +201,35 @@
                     android:text="Jan 1"
                     android:textColor="#FFFFFF" />
             </LinearLayout>
+                
+            <LinearLayout
+                android:id="@+id/notificationBadgeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="20dip"
+                android:layout_marginLeft="4dip"
+                android:background="@drawable/badge_background_red"
+                android:orientation="horizontal"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingRight="3dip"
+                    android:paddingTop="1dip"
+                    android:text="N"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/notificationBadgeCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="1dip"
+                    android:text="1"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

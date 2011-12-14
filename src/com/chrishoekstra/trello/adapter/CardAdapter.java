@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.vo.CardVO;
 
 public class CardAdapter extends ArrayAdapter<CardVO> {
@@ -42,30 +43,37 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
         protected TextView     checkItemBadgeCount;
 
         protected RelativeLayout voteBadge;
-        protected TextView     voteBadgeCount;
+        protected TextView       voteBadgeCount;
 
         protected LinearLayout dueDateBadge;
         protected TextView     dueDateBadgeTime;
 
+        protected LinearLayout notificationBadge;
+        protected TextView     notificationBadgeCount;
+        
         protected LinearLayout gravatarIcons;
     }
 
-    public ArrayList<CardVO> mCards;
+    private ArrayList<CardVO> mCards;
+    private TrelloModel mModel;
     private LayoutInflater mInflater;
     private SimpleDateFormat mDateFomat;
     private DateTimeFormatter mDateTimeFormatter;
+    
     private String mVoteString;
     private String mVotesString;
+    
     private float mThirtyDp;
     private float mFourDp;
 
-    public CardAdapter(Context context, int textViewResourceId, ArrayList<CardVO> cards) {
+    public CardAdapter(Context context, int textViewResourceId, ArrayList<CardVO> cards, TrelloModel model) {
         super(context, textViewResourceId, cards);
 
+        mCards = cards;
+        mModel = model;
         mInflater = LayoutInflater.from(context);
         mDateFomat = new SimpleDateFormat("MMM dd");
         mDateTimeFormatter = ISODateTimeFormat.dateTime();
-        mCards = cards;
 
         mVoteString  = context.getResources().getString(R.string.vote);
         mVotesString = context.getResources().getString(R.string.votes);
@@ -115,6 +123,9 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             holder.dueDateBadge      = (LinearLayout) convertView.findViewById(R.id.dueDateBadgeLayout);
             holder.dueDateBadgeTime = (TextView)     convertView.findViewById(R.id.dueDateBadgeTime);
 
+            holder.notificationBadge      = (LinearLayout) convertView.findViewById(R.id.notificationBadgeLayout);
+            holder.notificationBadgeCount = (TextView)     convertView.findViewById(R.id.notificationBadgeCount);
+            
             holder.gravatarIcons = (LinearLayout) convertView.findViewById(R.id.gravatar_icons);
 
             convertView.setTag(holder);
@@ -159,6 +170,10 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
                 holder.dueDateBadgeTime.setText("?");
             }
 
+            int count = mModel.getNotificationCount(card._id);
+            holder.notificationBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+            holder.notificationBadgeCount.setText(count + "");
+            
             if ((card.idMembers != null) && 
                 (card.idMembers.size() > 0)) {
                 holder.gravatarIcons.setVisibility(View.VISIBLE);
