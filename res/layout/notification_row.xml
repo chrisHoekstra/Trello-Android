@@ -8,6 +8,7 @@
     <include
         android:id="@+id/gravatar"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         layout="@layout/gravatar_icon" />
 
     <TextView
@@ -16,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/gravatar"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="-2dp"
         android:layout_toRightOf="@+id/gravatar"
         android:text="changed the card &apos;New feature request that does X&apos; on &apos;Test Board&apos;"
         android:textColor="#FF434343"
