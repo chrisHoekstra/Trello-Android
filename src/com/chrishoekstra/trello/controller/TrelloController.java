@@ -67,7 +67,7 @@ public class TrelloController {
     private void addListeners() {
         mModel.addListener(new TrelloModel.OnLoginCompleteListener() {
             @Override
-            public void onLoginCompleteEvent(TrelloModel model) {
+            public void onLoginCompleteEvent(TrelloModel model, boolean successful) {
                 // TODO Auto-generated method stub
                 
             }
@@ -106,9 +106,7 @@ public class TrelloController {
         
         @Override
         protected void onPostExecute(Boolean result) {
-            if (result) {
-                mModel.loginComplete();
-            }
+            mModel.loginComplete(result);
         }
     }
     

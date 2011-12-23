@@ -25,7 +25,7 @@ public class TrelloModel {
     
     // Listener Declaration
     public interface OnLoginCompleteListener {
-        void onLoginCompleteEvent(TrelloModel model);
+        void onLoginCompleteEvent(TrelloModel model, boolean successful);
     }
 
     public interface OnBoardReceivedListener {
@@ -49,9 +49,9 @@ public class TrelloModel {
     
     
     // Alert Listeners
-    private final void alertOnLoginCompleteListeners() {
+    private final void alertOnLoginCompleteListeners(boolean successful) {
         for (final OnLoginCompleteListener listener : onLoginCompleteListeners)
-            listener.onLoginCompleteEvent(this);
+            listener.onLoginCompleteEvent(this, successful);
     }
     
     private final void alertOnBoardReceivedListeners(BoardResultVO result) {
@@ -186,7 +186,7 @@ public class TrelloModel {
     private HashMap<String, Integer> mCardNotifications;
     
     // Model functions
-    public void loginComplete() {
-        alertOnLoginCompleteListeners();
+    public void loginComplete(boolean successful) {
+        alertOnLoginCompleteListeners(successful);
     }
 }

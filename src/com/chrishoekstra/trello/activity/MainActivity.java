@@ -1,8 +1,10 @@
 package com.chrishoekstra.trello.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +19,7 @@ public class MainActivity extends Activity {
 
     // Dialog static definitions
     private static final int DIALOG_PROGRESS = 0;
+    private static final int DIALOG_LOGIN_ERROR = 1;
     
     // Class static definitions
     
@@ -49,10 +52,15 @@ public class MainActivity extends Activity {
         // Create listeners
         mOnLoginCompleteListener = new TrelloModel.OnLoginCompleteListener() {
             @Override
-            public void onLoginCompleteEvent(TrelloModel model) {
-                Intent intent = new Intent(MainActivity.this, TrelloTabActivity.class);
-                startActivity(intent);
-                dismissDialog(DIALOG_PROGRESS);
+            public void onLoginCompleteEvent(TrelloModel model, boolean successful) {
+                if (successful) {
+                    Intent intent = new Intent(MainActivity.this, TrelloTabActivity.class);
+                    startActivity(intent);
+                    dismissDialog(DIALOG_PROGRESS);
+                } else {
+                    dismissDialog(DIALOG_PROGRESS);
+                    showDialog(DIALOG_LOGIN_ERROR);
+                }
             }
         };
         
@@ -79,12 +87,22 @@ public class MainActivity extends Activity {
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case DIALOG_PROGRESS:
-                ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                ProgressDialog dialog = new ProgressDialog(this);
                 dialog.setCustomTitle(null);
                 dialog.setMessage(getString(R.string.logging_in));
                 dialog.setIndeterminate(true);
                 dialog.setCancelable(false);
                 return dialog;
+            case DIALOG_LOGIN_ERROR:
+                return new AlertDialog.Builder(this)
+                .setTitle(R.string.error)
+                .setMessage(getResources().getString(R.string.login_error_message))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
         }
         
         return super.onCreateDialog(id);

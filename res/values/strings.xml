@@ -12,5 +12,7 @@
     <string name="load_more_notifications">Load More Notifications</string>
 	<string name="vote">vote</string>
 	<string name="votes">votes</string>
+	<string name="error">Error</string>
+	<string name="login_error_message">There was an error logging in.  Please try again.</string>
 	
 </resources>
