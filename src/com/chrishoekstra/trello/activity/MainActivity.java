@@ -65,6 +65,8 @@ public class MainActivity extends Activity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     dismissDialog(DIALOG_PROGRESS);
+                    
+                    finish();
                 } else {
                     dismissDialog(DIALOG_PROGRESS);
                     showDialog(DIALOG_LOGIN_ERROR);
