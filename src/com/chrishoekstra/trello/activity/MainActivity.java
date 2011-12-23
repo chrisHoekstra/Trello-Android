@@ -6,7 +6,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.EditText;
 
@@ -22,6 +24,8 @@ public class MainActivity extends Activity {
     private static final int DIALOG_LOGIN_ERROR = 1;
     
     // Class static definitions
+    protected static final String USERNAME = "username";
+    protected static final String PASSWORD = "password";
     
     // View items
     
@@ -35,6 +39,8 @@ public class MainActivity extends Activity {
     private TrelloModel.OnLoginCompleteListener mOnLoginCompleteListener;
     
     // Activity variables
+    private SharedPreferences mPrefs;
+    private SharedPreferences.Editor mPrefsEditor;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,11 +61,17 @@ public class MainActivity extends Activity {
             public void onLoginCompleteEvent(TrelloModel model, boolean successful) {
                 if (successful) {
                     Intent intent = new Intent(MainActivity.this, TrelloTabActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     dismissDialog(DIALOG_PROGRESS);
                 } else {
                     dismissDialog(DIALOG_PROGRESS);
                     showDialog(DIALOG_LOGIN_ERROR);
+                    
+                    mPrefsEditor.putString(USERNAME, "");
+                    mPrefsEditor.putString(PASSWORD, "");
+                    mPrefsEditor.commit();
                 }
             }
         };
@@ -68,8 +80,15 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 showDialog(DIALOG_PROGRESS);
-                mController.login(((EditText) findViewById(R.id.username)).getText().toString(), 
-                                  ((EditText) findViewById(R.id.password)).getText().toString());
+                
+                String username = ((EditText) findViewById(R.id.username)).getText().toString();
+                String password = ((EditText) findViewById(R.id.password)).getText().toString();
+                
+                mController.login(username, password);
+                
+                mPrefsEditor.putString(USERNAME, username);
+                mPrefsEditor.putString(PASSWORD, password);
+                mPrefsEditor.commit();
             }
         });
         
@@ -80,8 +99,21 @@ public class MainActivity extends Activity {
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mPrefsEditor = mPrefs.edit();
+        
+        String username = mPrefs.getString(USERNAME, "");
+        String password = mPrefs.getString(PASSWORD, "");
+        
+        if (!username.equals("") && !password.equals("")) {
+            showDialog(DIALOG_PROGRESS);
+            
+            ((EditText) findViewById(R.id.username)).setText(username);
+            ((EditText) findViewById(R.id.password)).setText(password);
+            
+            mController.login(username, password);
+        }
     }
-    
 
     @Override
     protected Dialog onCreateDialog(int id) {
