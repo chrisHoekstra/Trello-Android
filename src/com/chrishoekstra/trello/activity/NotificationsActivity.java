@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.adapter.NotificationsAdapter;
@@ -29,6 +30,8 @@ public class NotificationsActivity extends ListActivity {
 
     // View items
     private Button mMoreButton;
+    private RelativeLayout mMoreLayout;
+    private RelativeLayout mProgressLayout;
     
     // Models
     private TrelloModel mModel;
@@ -48,7 +51,9 @@ public class NotificationsActivity extends ListActivity {
         setContentView(R.layout.notifications);
         
         // Instantiate view items
-        mMoreButton = (Button) getLayoutInflater().inflate(R.layout.more_button, null);
+        mMoreLayout     = (RelativeLayout) getLayoutInflater().inflate(R.layout.more_layout, null);
+        mMoreButton     = (Button)         mMoreLayout.findViewById(R.id.more_button);
+        mProgressLayout = (RelativeLayout) mMoreLayout.findViewById(R.id.progress_layout);
         
         // Instantiate models
         mModel = TrelloModel.getInstance();
@@ -61,11 +66,14 @@ public class NotificationsActivity extends ListActivity {
             @Override
             public void onNotificationsReceivedEvent(TrelloModel model, NotificationsResultVO result) {
                 mAdapter.addNotifications(result.notifications.subList(NUMBER_OF_STATIC_NOTIFICATIONS, result.notifications.size()));
+
+                mProgressLayout.setVisibility(View.GONE);
                 
                 if (result.isMore) {
+                    mMoreButton.setVisibility(View.VISIBLE);
                     mMoreButton.setText(R.string.load_more_notifications);
                 } else {
-                    mMoreButton.setVisibility(View.GONE);
+                    mMoreLayout.setVisibility(View.GONE);
                 }
             }
         };
@@ -74,6 +82,9 @@ public class NotificationsActivity extends ListActivity {
             @Override
             public void onClick(View v) {
                 mController.getNotifications(mAdapter.getCount());
+                
+                mMoreButton.setVisibility(View.GONE);
+                mProgressLayout.setVisibility(View.VISIBLE);
             }
         });
         
@@ -190,7 +201,10 @@ public class NotificationsActivity extends ListActivity {
     
     private void populateView() {
         mMoreButton.setText(R.string.see_all_notifications);
-        getListView().addFooterView(mMoreButton);
+        getListView().addFooterView(mMoreLayout);
+
+        mMoreButton.setVisibility(View.VISIBLE);
+        mProgressLayout.setVisibility(View.GONE);
         
         mAdapter = new NotificationsAdapter(this, R.id.name, mModel.getAllBoardsResult().notifications);
         setListAdapter(mAdapter);
