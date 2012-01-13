@@ -5,11 +5,14 @@
     android:background="#FFE6E6E6"
     android:padding="10dip" >
 
-    <include
+    <com.chrishoekstra.trello.gravatar.GravatarView
+        xmlns:gravatar="https://github.com/phbernard/android-gravatar-view/schemas"
         android:id="@+id/gravatar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        layout="@layout/gravatar_icon" />
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:layout_marginLeft="1dip"
+        android:background="#FFB9B9B9"
+        android:padding="1dip" />
 
     <TextView
         android:id="@+id/notification_text"

@@ -18,6 +18,7 @@ public class TrelloModel {
         if (model == null) {
             model = new TrelloModel();
             model.mCardNotifications = new HashMap<String, Integer>();
+            model.mMemberGravatars = new HashMap<String, String>();
         }
         return model;
     }
@@ -141,6 +142,10 @@ public class TrelloModel {
                 mCardNotifications.put(notification.data.card.id, count);
             }
         }
+        
+        for (MemberVO member : value.members) {
+            mMemberGravatars.put(member._id, member.gravatar);
+        }
     }
     
     public BoardResultVO getCurrentBoard() {
@@ -179,11 +184,16 @@ public class TrelloModel {
         }
     }
     
+    public String getGravatarId(String memberId) {
+        return mMemberGravatars.get(memberId);
+    }
+    
     // Variables
     private AllBoardsResultVO mAllBoardsResult;
     private BoardResultVO mCurrentBoard;
     private MemberVO mUser;
     private HashMap<String, Integer> mCardNotifications;
+    private HashMap<String, String> mMemberGravatars;
     
     // Model functions
     public void loginComplete(boolean successful) {

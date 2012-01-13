@@ -7,27 +7,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.Utils;
+import com.chrishoekstra.trello.gravatar.GravatarAPI;
+import com.chrishoekstra.trello.gravatar.GravatarView;
+import com.chrishoekstra.trello.model.TrelloModel;
+import com.chrishoekstra.trello.vo.MemberVO;
 import com.chrishoekstra.trello.vo.NotificationVO;
 
 public class NotificationsAdapter extends ArrayAdapter<NotificationVO> {
 
     public List<NotificationVO> mNotifications;
     private LayoutInflater mInflater;
-
+    private TrelloModel mModel;
+    
     static class ViewHolder {
         protected TextView notificationText;
         protected TextView dateText;
-        protected ImageView gravatar;
+        protected GravatarView gravatar;
     }
     
     public NotificationsAdapter(Context context, int textViewResourceId, List<NotificationVO> notifications) {
         super(context, textViewResourceId, notifications);
 
+        mModel = TrelloModel.getInstance();
         mInflater = LayoutInflater.from(context);
         mNotifications = notifications;
     }
@@ -50,9 +55,9 @@ public class NotificationsAdapter extends ArrayAdapter<NotificationVO> {
             convertView = mInflater.inflate(R.layout.notification_row, null);
 
             holder = new ViewHolder();
-            holder.notificationText = (TextView)  convertView.findViewById(R.id.notification_text);
-            holder.dateText         = (TextView)  convertView.findViewById(R.id.date);
-            holder.gravatar         = (ImageView) convertView.findViewById(R.id.gravatar);
+            holder.notificationText = (TextView)     convertView.findViewById(R.id.notification_text);
+            holder.dateText         = (TextView)     convertView.findViewById(R.id.date);
+            holder.gravatar         = (GravatarView) convertView.findViewById(R.id.gravatar);
             
             convertView.setTag(holder);
         } else {
@@ -64,6 +69,12 @@ public class NotificationsAdapter extends ArrayAdapter<NotificationVO> {
         if (notification != null) {
             holder.notificationText.setText(Utils.getHtmlFormattedNotificationText(notification));
             holder.dateText.setText(Utils.getFormattedStringFromDate(notification.date));
+            
+            MemberVO member = mModel.getAllBoardsResult().members.get(mModel.getAllBoardsResult().members.indexOf(notification.idMemberCreator));
+            
+            holder.gravatar.setDefaultImageType(GravatarAPI.DEFAULT_IMAGE_404);
+            holder.gravatar.setInitials(member.initials);
+            holder.gravatar.setAvatarURL(GravatarAPI.getAvatarURLById(mModel.getGravatarId(notification.idMemberCreator)));
         }
         
         return convertView;
