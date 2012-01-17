@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import android.os.AsyncTask;
 
+import com.chrishoekstra.trello.TrelloApplication;
+import com.chrishoekstra.trello.TrelloMessage;
 import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.service.TrelloService;
 import com.chrishoekstra.trello.vo.AddCardVO;
@@ -30,10 +32,19 @@ public class TrelloController {
         return controller;
     }
 
+    public TrelloController() {
+        mService = new TrelloService();
+    }
+    
+    public TrelloController(TrelloApplication application) {
+        mApplication = application;
+        mService = new TrelloService();
+    }
+
     // Variables
     private TrelloModel mModel;
     private TrelloService mService;
-    
+    private TrelloApplication mApplication;
     
     // Public Methods
     public void login(String username, String password) {
@@ -107,6 +118,7 @@ public class TrelloController {
         @Override
         protected void onPostExecute(Boolean result) {
             mModel.loginComplete(result);
+            mApplication.sendMessage(TrelloMessage.LOGIN_COMPLETE, false);
         }
     }
     
@@ -125,6 +137,7 @@ public class TrelloController {
         protected void onPostExecute(BoardResultVO result) {
             if (result != null) {
                 mModel.boardReceived(result);
+                mApplication.sendMessage(TrelloMessage.BOARD_RECEIVED);
             }
         }
     }
@@ -144,6 +157,7 @@ public class TrelloController {
         protected void onPostExecute(NotificationsResultVO result) {
             if (result != null) {
                 mModel.notificationsReceived(result);
+                mApplication.sendMessage(TrelloMessage.NOTIFICATIONS_RECEIVED);
             }
         }
     }
@@ -163,6 +177,7 @@ public class TrelloController {
         protected void onPostExecute(CardVO result) {
             if (result != null) {
                 mModel.cardAdded(result);
+                mApplication.sendMessage(TrelloMessage.CARD_ADDED);
             }
         }
     }

@@ -8,11 +8,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.EditText;
 
 import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.TrelloApplication;
+import com.chrishoekstra.trello.TrelloMessage;
 import com.chrishoekstra.trello.controller.TrelloController;
 import com.chrishoekstra.trello.model.TrelloModel;
 
@@ -140,6 +144,38 @@ public class MainActivity extends Activity {
         }
         
         return super.onCreateDialog(id);
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        ((TrelloApplication) getApplication()).registerActivityHandler(new Handler() {
+           @Override
+           public void handleMessage(Message message) {
+               switch (message.what) {
+                   case TrelloMessage.LOGIN_COMPLETE :
+                       Boolean successful = (Boolean) message.obj;
+                       
+                       if (successful) {
+                           Intent intent = new Intent(MainActivity.this, TrelloTabActivity.class);
+                           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                           startActivity(intent);
+                           dismissDialog(DIALOG_PROGRESS);
+                           
+                           finish();
+                       } else {
+                           dismissDialog(DIALOG_PROGRESS);
+                           showDialog(DIALOG_LOGIN_ERROR);
+                           
+                           mPrefsEditor.putString(USERNAME, "");
+                           mPrefsEditor.putString(PASSWORD, "");
+                           mPrefsEditor.commit();
+                       }
+               }
+           }
+        });
     }
 
     @Override
