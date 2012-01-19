@@ -18,14 +18,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.BundleKeys;
+import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.adapter.CardAdapter;
 import com.chrishoekstra.trello.controller.TrelloController;
 import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.vo.BoardListVO;
-import com.chrishoekstra.trello.vo.BoardVO;
 import com.chrishoekstra.trello.vo.CardVO;
 
 public class BoardListActivity extends Activity {
@@ -52,6 +52,7 @@ public class BoardListActivity extends Activity {
     private TrelloController mController;
     
     // Listeners
+    private TrelloModel.OnCardsReceivedListener mOnCardsReceivedListener;
     private TrelloModel.OnCardAddedListener mOnCardAddedListener;
     
     // Activity variables
@@ -80,11 +81,25 @@ public class BoardListActivity extends Activity {
         mController = TrelloController.getInstance();
         
         // Create listeners
+        mOnCardsReceivedListener = new TrelloModel.OnCardsReceivedListener() {
+            @Override
+            public void onCardsRecivedEvent(TrelloModel model, String boardListId, ArrayList<CardVO> result) {
+                mCardAdapter = new CardAdapter(BoardListActivity.this, R.id.name, result, model);
+                mCardList.setAdapter(mCardAdapter);
+            }
+        };
+        
         mOnCardAddedListener = new TrelloModel.OnCardAddedListener() {
             @Override
-            public void onCardAddedEvent(TrelloModel model, CardVO card) {
-                mModel.getCurrentBoard().cards.add(card);
-                populateView();
+            public void onCardAddedEvent(TrelloModel model, Boolean result) {
+                if (result) {
+                    Toast.makeText(BoardListActivity.this, "Card added!", Toast.LENGTH_SHORT).show();
+                    mController.getCardsByList(mBoardListId);
+                } else {
+                    Toast.makeText(BoardListActivity.this, "Card addition failed!", Toast.LENGTH_SHORT).show();
+                }
+
+                endAddCard();
             }
         };
         
@@ -92,7 +107,8 @@ public class BoardListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
                 Intent intent = new Intent(getParent(), CardActivity.class);
-                intent.putExtra(BundleKeys.CARD_ID, mCardAdapter.getItem(position)._id);
+                intent.putExtra(BundleKeys.CARD_ID, mCardAdapter.getItem(position).id);
+                intent.putExtra(BundleKeys.BOARD_LIST_ID, mBoardListId);
                 ((TabActivityGroup) getParent()).startChildActivity("CardActivity", intent);
             }
         });
@@ -115,17 +131,20 @@ public class BoardListActivity extends Activity {
         mAddButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mController.addCard(mBoardId, mBoardListId, mAddCardEdit.getText().toString(), 65536);
+                mController.addCard(mBoardListId, mAddCardEdit.getText().toString());
             }
         });
         
         // Add listeners
+        mModel.addListener(mOnCardsReceivedListener);
         mModel.addListener(mOnCardAddedListener);
         
         // Get bundle extras
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
+        
+        mController.getCardsByList(mBoardListId);
         
         populateView();
     }
@@ -213,6 +232,7 @@ public class BoardListActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         
+        mModel.removeListener(mOnCardsReceivedListener);
         mModel.removeListener(mOnCardAddedListener);
         
         // Release remaining resources
@@ -234,31 +254,8 @@ public class BoardListActivity extends Activity {
     }
     
     private void populateView() {
-        ArrayList<CardVO> cards = mModel.getCurrentBoard().cards;
-        ArrayList<CardVO> filteredCards = new ArrayList<CardVO>();
-        
-        for (CardVO card : cards) {
-            if (card.idBoard.equals(mBoardId) &&
-                card.idList.equals(mBoardListId)) {
-                filteredCards.add(card);
-            }
-        }
-        
-        filteredCards.trimToSize();
-
-        mCardAdapter = new CardAdapter(this, R.id.name, filteredCards, mModel);
-        mCardList.setAdapter(mCardAdapter);
-        
-        for (BoardVO board : mModel.getCurrentBoard().boards) {
-            if (board._id.equals(mBoardId)) {                
-                for (BoardListVO list : board.lists) {
-                    if (list._id.equals(mBoardListId)) {
-                        mBoardListText.setText(list.name);
-                        break;
-                    }
-                }
-            }
-        }
+        BoardListVO list = mModel.getBoardList(mBoardId, mBoardListId);
+        mBoardListText.setText(list.name);
     }
     
     private void beginAddCard() {

@@ -40,7 +40,6 @@ public class NotificationsActivity extends ListActivity {
     private TrelloController mController;
     
     // Listeners
-    private TrelloModel.OnNotificationsReceivedListener mOnNotificationsReceivedListener;
     
     // Activity variables
     private NotificationsAdapter mAdapter;
@@ -62,26 +61,10 @@ public class NotificationsActivity extends ListActivity {
         mController = TrelloController.getInstance();
         
         // Create listeners
-        mOnNotificationsReceivedListener = new TrelloModel.OnNotificationsReceivedListener() {
-            @Override
-            public void onNotificationsReceivedEvent(TrelloModel model, NotificationsResultVO result) {
-                mAdapter.addNotifications(result.notifications.subList(NUMBER_OF_STATIC_NOTIFICATIONS, result.notifications.size()));
-
-                mProgressLayout.setVisibility(View.GONE);
-                
-                if (result.isMore) {
-                    mMoreButton.setVisibility(View.VISIBLE);
-                    mMoreButton.setText(R.string.load_more_notifications);
-                } else {
-                    mMoreLayout.setVisibility(View.GONE);
-                }
-            }
-        };
-        
         mMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mController.getNotifications(mAdapter.getCount());
+                //mController.getNotifications(mAdapter.getCount());
                 
                 mMoreButton.setVisibility(View.GONE);
                 mProgressLayout.setVisibility(View.VISIBLE);
@@ -89,7 +72,6 @@ public class NotificationsActivity extends ListActivity {
         });
         
         // Add listeners
-        mModel.addListener(mOnNotificationsReceivedListener);
         
         // Get bundle extras
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
@@ -181,8 +163,6 @@ public class NotificationsActivity extends ListActivity {
     public void onDestroy() {
         super.onDestroy();
         
-        mModel.removeListener(mOnNotificationsReceivedListener);
-        
         if (mMoreButton != null) {
             mMoreButton.setOnClickListener(null);
             mMoreButton = null;
@@ -206,7 +186,7 @@ public class NotificationsActivity extends ListActivity {
         mMoreButton.setVisibility(View.VISIBLE);
         mProgressLayout.setVisibility(View.GONE);
         
-        mAdapter = new NotificationsAdapter(this, R.id.name, mModel.getAllBoardsResult().notifications);
+        mAdapter = new NotificationsAdapter(this, R.id.name, mModel.getNotifications());
         setListAdapter(mAdapter);
     }
 }

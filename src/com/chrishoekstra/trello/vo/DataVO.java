@@ -5,4 +5,5 @@ public class DataVO {
     public CardVO card;
     public OrganizationVO organization;
     public String idMember;
+    public String text;
 }

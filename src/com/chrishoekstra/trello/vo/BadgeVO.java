@@ -6,6 +6,7 @@ public class BadgeVO {
     public int checkItemsChecked;
     public int comments;
     public int attachments;
+    public int votes;
     public boolean description;
     public String due;
 }

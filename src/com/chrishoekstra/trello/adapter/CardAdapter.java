@@ -21,8 +21,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.gravatar.GravatarAPI;
+import com.chrishoekstra.trello.gravatar.GravatarView;
 import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.vo.CardVO;
+import com.chrishoekstra.trello.vo.LabelVO;
 
 public class CardAdapter extends ArrayAdapter<CardVO> {
 
@@ -99,12 +102,12 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             holder.nameText = (TextView) convertView.findViewById(R.id.name);
 
             holder.labels = new HashMap<String, View>();
-            holder.labels.put(CardVO.GREEN,  convertView.findViewById(R.id.green_label));
-            holder.labels.put(CardVO.YELLOW, convertView.findViewById(R.id.yellow_label));
-            holder.labels.put(CardVO.ORANGE, convertView.findViewById(R.id.orange_label));
-            holder.labels.put(CardVO.RED,    convertView.findViewById(R.id.red_label));
-            holder.labels.put(CardVO.PURPLE, convertView.findViewById(R.id.purple_label));
-            holder.labels.put(CardVO.BLUE,   convertView.findViewById(R.id.blue_label));
+            holder.labels.put(LabelVO.GREEN,  convertView.findViewById(R.id.green_label));
+            holder.labels.put(LabelVO.YELLOW, convertView.findViewById(R.id.yellow_label));
+            holder.labels.put(LabelVO.ORANGE, convertView.findViewById(R.id.orange_label));
+            holder.labels.put(LabelVO.RED,    convertView.findViewById(R.id.red_label));
+            holder.labels.put(LabelVO.PURPLE, convertView.findViewById(R.id.purple_label));
+            holder.labels.put(LabelVO.BLUE,   convertView.findViewById(R.id.blue_label));
 
             holder.descriptionBadge = (LinearLayout) convertView.findViewById(R.id.descriptionBadgeLayout);
 
@@ -142,8 +145,8 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
         if (card != null) {
             holder.nameText.setText(card.name);
 
-            for (String label : card.labels) {
-                holder.labels.get(label).setVisibility(View.VISIBLE);
+            for (LabelVO label : card.labels) {
+                holder.labels.get(label.color).setVisibility(View.VISIBLE);
             }
 
             holder.descriptionBadge.setVisibility(card.badges.description ? View.VISIBLE : View.GONE);
@@ -157,9 +160,8 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
             holder.checkItemBadge.setVisibility(card.badges.checkItems > 0 ? View.VISIBLE : View.GONE);
             holder.checkItemBadgeCount.setText(card.badges.checkItemsChecked + "/" + card.badges.checkItems);
 
-            holder.voteBadge.setVisibility(card.idMembersVoted.size() > 0 ? View.VISIBLE : View.GONE);
-            holder.voteBadgeCount.setText(card.idMembersVoted.size() + " " + 
-                    (card.idMembersVoted.size() > 1 ? mVotesString : mVoteString));
+            holder.voteBadge.setVisibility(card.badges.votes > 0 ? View.VISIBLE : View.GONE);
+            holder.voteBadgeCount.setText(card.badges.votes + " " + (card.badges.votes > 1 ? mVotesString : mVoteString));
 
             holder.dueDateBadge.setVisibility(((card.badges.due != null) && (!card.badges.due.equals(""))) ? View.VISIBLE : View.GONE);
             try {
@@ -170,7 +172,7 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
                 holder.dueDateBadgeTime.setText("?");
             }
 
-            int count = mModel.getNotificationCount(card._id);
+            int count = mModel.getNotificationCount(card.id);
             holder.notificationBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
             holder.notificationBadgeCount.setText(count + "");
             
@@ -180,10 +182,13 @@ public class CardAdapter extends ArrayAdapter<CardVO> {
                 holder.gravatarIcons.removeAllViews();
                 
                 for (String id : card.idMembers) {
-                    ImageView gravatar = (ImageView) mInflater.inflate(R.layout.gravatar_icon, null);
+                    GravatarView gravatar = new GravatarView(getContext());
                     holder.gravatarIcons.addView(gravatar);
+                    
                     gravatar.getLayoutParams().height = (int) mThirtyDp;
                     gravatar.getLayoutParams().width  = (int) mThirtyDp;
+                    gravatar.setDefaultImageType(GravatarAPI.DEFAULT_IMAGE_404);
+                    gravatar.setAvatarURL(GravatarAPI.getAvatarURLById(mModel.getGravatarId(id)));
                 }
             } else {
                 holder.gravatarIcons.setVisibility(View.GONE);

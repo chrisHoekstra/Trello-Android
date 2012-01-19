@@ -2,31 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
     android:layout_gravity="center"
-    android:padding="20dip"
-    android:gravity="center" >
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dip" >
 
-    <EditText
-        android:id="@+id/username"
+    <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/username_or_email" >
+        android:layout_marginBottom="10dip"
+        android:text="@string/login_instructions" />
+    
+    <TextView
+        android:id="@+id/request_token_link"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:autoLink="web"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="http://trello.com" />
+
+    <EditText
+        android:id="@+id/token"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:hint="@string/token" >
 
         <requestFocus />
     </EditText>
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:hint="@string/password" />
-
     <Button
-        android:id="@+id/login"
+        android:id="@+id/proceed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/login" />
+        android:layout_marginBottom="50dip"
+        android:text="@string/proceed" />
 
 </LinearLayout>

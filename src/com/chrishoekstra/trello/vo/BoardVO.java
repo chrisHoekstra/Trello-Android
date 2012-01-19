@@ -1,18 +1,12 @@
 package com.chrishoekstra.trello.vo;
 
-import java.util.ArrayList;
 
 public class BoardVO {
+    public String id;
     public String name;
-    public String _id;
+    public String desc;
+    public String idOrganization;
+    public String url;
     public PrefsVO prefs;
     public boolean closed;
-    public int nActionsSinceLastView;
-    public LabelNamesVO labelNames;
-    
-    public ArrayList<BoardListVO> lists;
-    public ArrayList<String> invitations;
-    public ArrayList<MembershipVO> memberships;
-    public ArrayList<String> idMembersWatching;
-    public ArrayList<String> idMembersRemoved;
 }

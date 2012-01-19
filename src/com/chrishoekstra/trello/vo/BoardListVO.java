@@ -1,8 +1,8 @@
 package com.chrishoekstra.trello.vo;
 
 public class BoardListVO {
-    public String _id;
+    public String id;
     public String name;
+    public String idBoard;
     public boolean closed;
-    public int pos;
 }

@@ -14,7 +14,6 @@ import com.chrishoekstra.trello.Utils;
 import com.chrishoekstra.trello.gravatar.GravatarAPI;
 import com.chrishoekstra.trello.gravatar.GravatarView;
 import com.chrishoekstra.trello.model.TrelloModel;
-import com.chrishoekstra.trello.vo.MemberVO;
 import com.chrishoekstra.trello.vo.NotificationVO;
 
 public class NotificationsAdapter extends ArrayAdapter<NotificationVO> {
@@ -70,10 +69,10 @@ public class NotificationsAdapter extends ArrayAdapter<NotificationVO> {
             holder.notificationText.setText(Utils.getHtmlFormattedNotificationText(notification));
             holder.dateText.setText(Utils.getFormattedStringFromDate(notification.date));
             
-            MemberVO member = mModel.getAllBoardsResult().members.get(mModel.getAllBoardsResult().members.indexOf(notification.idMemberCreator));
+            //MemberVO member = mModel.getAllBoardsResult().members.get(mModel.getAllBoardsResult().members.indexOf(notification.idMemberCreator));
             
+            //holder.gravatar.setInitials(member.initials);
             holder.gravatar.setDefaultImageType(GravatarAPI.DEFAULT_IMAGE_404);
-            holder.gravatar.setInitials(member.initials);
             holder.gravatar.setAvatarURL(GravatarAPI.getAvatarURLById(mModel.getGravatarId(notification.idMemberCreator)));
         }
         

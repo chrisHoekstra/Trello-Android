@@ -6,7 +6,7 @@ public class NewsVO {
     public static final String ADDED_TO_CARD = "addedToCard";
     public static final String INVITED_TO_ORGANIZTION = "invitedToOrganization";
     
-    public String _id;
+    public String id;
     public String type;
     public String date;
     public String idMemberCreator;

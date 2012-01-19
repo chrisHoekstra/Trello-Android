@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    
     <string name="app_name">Trello</string>
     <string name="username_or_email">Username or Email</string>
     <string name="password">Password</string>
@@ -15,5 +15,8 @@
 	<string name="error">Error</string>
 	<string name="login_error_message">There was an error logging in.  Please try again.</string>
 	<string name="loading">Loading</string>
+	<string name="proceed">Proceed</string>
+	<string name="token">Token</string>
+	<string name="login_instructions">To proceed, click on the link below.  Login to your Trello account if prompted.  When asked for access, select your desired restrictions but be sure to select \'Forever\' for the time span to ensure proper operation.  Copy the token into the input below the link and hit \'Proceed\' to finish initialization.</string>
 	
 </resources>

@@ -6,15 +6,9 @@ import android.os.AsyncTask;
 
 import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.service.TrelloService;
-import com.chrishoekstra.trello.vo.AddCardVO;
-import com.chrishoekstra.trello.vo.AllBoardsResultVO;
-import com.chrishoekstra.trello.vo.ApiMethodVO;
-import com.chrishoekstra.trello.vo.BoardResultVO;
+import com.chrishoekstra.trello.vo.BoardListVO;
 import com.chrishoekstra.trello.vo.BoardVO;
 import com.chrishoekstra.trello.vo.CardVO;
-import com.chrishoekstra.trello.vo.MemberVO;
-import com.chrishoekstra.trello.vo.NotificationVO;
-import com.chrishoekstra.trello.vo.NotificationsResultVO;
 
 public class TrelloController {
 
@@ -25,7 +19,6 @@ public class TrelloController {
             controller = new TrelloController();
             controller.mModel = TrelloModel.getInstance();
             controller.mService = new TrelloService();
-            controller.addListeners();
         }
         return controller;
     }
@@ -36,132 +29,120 @@ public class TrelloController {
     
     
     // Public Methods
-    public void login(String username, String password) {
-        new UserLoginTask().execute(username, password);
+    public void setToken(String token) {
+        mService.setToken(token);
     }
 
-    public void fetchBoard(String mBoardId) {
-        new BoardFetchTask().execute(mBoardId);
+    public String getRequestLink() {
+        return mService.getRequestLink();
     }
     
-    public void addCard(String boardId, String boardListId, String cardName, int position) {
-        AddCardVO addCard = new AddCardVO();
-        
-        addCard.method = ApiMethodVO.CREATE;
-        addCard.token  = mService.getFilteredToken();
-        addCard.data.idParents.add(boardListId);
-        addCard.data.idParents.add(boardId);
-        addCard.data.attrs.name = cardName;
-        addCard.data.attrs.pos = position;
-        addCard.data.attrs.idBoard = boardId;
-        addCard.data.attrs.idList = boardListId;
-        
-        new AddCardTask().execute(addCard);
+    
+
+    
+    public void getUserData() {
+        new UserDataFetchTask().execute();
     }
 
-    public void getNotifications(int count) {
-        new NotificationsFetchTask().execute(count);
+    public void getListsByBoard(String mBoardId) {
+        new ListsByBoardFetchTask().execute(mBoardId);
+    }
+
+    public void getCardsByList(String mBoardListId) {
+        new CardsByBoardListFetchTask().execute(mBoardListId);
     }
     
-    // Private methods
-    private void addListeners() {
-        mModel.addListener(new TrelloModel.OnLoginCompleteListener() {
-            @Override
-            public void onLoginCompleteEvent(TrelloModel model, boolean successful) {
-                // TODO Auto-generated method stub
-                
-            }
-        });
+    public void addCard(String boardListId, String cardName) {
+        new AddCardTask(boardListId).execute(cardName);
     }
-    
+
     
     // AsyncTasks
-    private class UserLoginTask extends AsyncTask<String, Void, Boolean> {
+    private class UserDataFetchTask extends AsyncTask<Void, Void, Boolean> {
         
         @Override
-        protected Boolean doInBackground(String... parameters) {
+        protected Boolean doInBackground(Void... parameters) {
             Boolean result = false;
             
-            if (mService.login(parameters[0], parameters[1])) {
-                AllBoardsResultVO results = mService.getBoardResults();
-                
-                if (results != null) {
-                    mModel.setAllBoardsResult(results);
-                    
-                    if (results.members != null) {   
-                        for (MemberVO member : results.members) {
-                            if (member._id.equals(results.idMember)) {
-                                mModel.setUser(member);
-                                break;
-                            }
-                        }
-                        
-                        result = true;
-                    }
-                }
-            }
+            mModel.setAllBoards(mService.getAllBoards());
+            mModel.setUser(mService.getUser());
+            mModel.setNotifications(mService.getNotifications());
             
             return result;
         }
         
         @Override
         protected void onPostExecute(Boolean result) {
-            mModel.loginComplete(result);
+            mModel.userDataReceived(result);
         }
     }
     
-    private class BoardFetchTask extends AsyncTask<String, Void, BoardResultVO> {
+    private class ListsByBoardFetchTask extends AsyncTask<String, Void, ArrayList<BoardListVO>> {
+        
+        String boardId;
         
         @Override
-        protected BoardResultVO doInBackground(String... parameters) {
-            BoardResultVO result = null;
+        protected ArrayList<BoardListVO> doInBackground(String... parameters) {
+            ArrayList<BoardListVO> result = null;
+
+            boardId = parameters[0];
             
-            result = mService.getBoard(parameters[0]);
+            result = mService.getListsByBoard(boardId);
             
             return result;
         }
         
         @Override
-        protected void onPostExecute(BoardResultVO result) {
+        protected void onPostExecute(ArrayList<BoardListVO> result) {
             if (result != null) {
-                mModel.boardReceived(result);
+                mModel.boardListsReceived(boardId, result);
             }
         }
     }
-    
-    private class NotificationsFetchTask extends AsyncTask<Integer, Void, NotificationsResultVO> {
+
+    private class CardsByBoardListFetchTask extends AsyncTask<String, Void, ArrayList<CardVO>> {
+        
+        String boardListId;
         
         @Override
-        protected NotificationsResultVO doInBackground(Integer... counts) {
-            NotificationsResultVO result = null;
+        protected ArrayList<CardVO> doInBackground(String... parameters) {
+            ArrayList<CardVO> result = null;
+
+            boardListId = parameters[0];
             
-            result = mService.getNotifications(mModel.getUser().username, counts[0]);
+            result = mService.getCardsByBoardList(boardListId);
             
             return result;
         }
         
         @Override
-        protected void onPostExecute(NotificationsResultVO result) {
+        protected void onPostExecute(ArrayList<CardVO> result) {
             if (result != null) {
-                mModel.notificationsReceived(result);
+                mModel.cardsReceived(boardListId, result);
             }
         }
     }
-    
-    private class AddCardTask extends AsyncTask<AddCardVO, Void, CardVO> {
+
+    private class AddCardTask extends AsyncTask<String, Void, Boolean> {
+        
+        private String boardId;
+        
+        public AddCardTask(String boardId) {
+            this.boardId = boardId;
+        }
         
         @Override
-        protected CardVO doInBackground(AddCardVO... parameters) {
-            CardVO result = null;
+        protected Boolean doInBackground(String... parameters) {
+            Boolean result = false;
             
-            result = mService.addCard(parameters[0]);
+            result = mService.addCard(boardId, parameters[0]);
             
             return result;
         }
         
         @Override
-        protected void onPostExecute(CardVO result) {
-            if (result != null) {
+        protected void onPostExecute(Boolean result) {
+            if (result) {
                 mModel.cardAdded(result);
             }
         }

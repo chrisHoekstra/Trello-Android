@@ -1,5 +1,7 @@
 package com.chrishoekstra.trello.activity;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,14 +16,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.BundleKeys;
+import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.adapter.BoardListAdapter;
 import com.chrishoekstra.trello.controller.TrelloController;
 import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.vo.BoardListVO;
-import com.chrishoekstra.trello.vo.BoardResultVO;
-import com.chrishoekstra.trello.vo.BoardVO;
 
 public class BoardActivity extends Activity {
     
@@ -42,7 +42,7 @@ public class BoardActivity extends Activity {
     private TrelloController mController;
     
     // Listeners
-    private TrelloModel.OnBoardReceivedListener mOnBoardReceivedListener;
+    private TrelloModel.OnBoardListsReceivedListener mOnBoardListsReceivedListener;
     
     // Activity variables
     private BoardListAdapter mBoardListAdapter;
@@ -64,25 +64,12 @@ public class BoardActivity extends Activity {
         mController = TrelloController.getInstance();
         
         // Create listeners
-        mOnBoardReceivedListener = new TrelloModel.OnBoardReceivedListener() {
+        mOnBoardListsReceivedListener = new TrelloModel.OnBoardListsReceivedListener() {
             @Override
-            public void onBoardReceveidEvent(TrelloModel model, BoardResultVO result) {
-                mModel.setCurrentBoard(result);
-                
-                BoardVO currentBoard = null;
-                
-                for (BoardVO board : result.boards) {
-                    if (board._id.equals(mBoardId)) {
-                        currentBoard = board;
-                        break;
-                    }
-                }
-                
-                if (currentBoard != null) {
-                    mBoardListAdapter = new BoardListAdapter(BoardActivity.this, R.id.name, currentBoard.lists);
+            public void onBoardListReceviedEvent(TrelloModel model, String boardId, ArrayList<BoardListVO> result) {
+                if (boardId.equals(mBoardId)) {
+                    mBoardListAdapter = new BoardListAdapter(BoardActivity.this, R.id.name, result);
                     mBoardListsList.setAdapter(mBoardListAdapter);
-                
-                    mBoardText.setText(currentBoard.name);
                 }
             }
         };
@@ -92,20 +79,20 @@ public class BoardActivity extends Activity {
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
                 Intent intent = new Intent(getParent(), BoardListActivity.class);
                 intent.putExtra(BundleKeys.BOARD_ID, mBoardId);
-                intent.putExtra(BundleKeys.BOARD_LIST_ID, mBoardListAdapter.getItem(position)._id);
+                intent.putExtra(BundleKeys.BOARD_LIST_ID, mBoardListAdapter.getItem(position).id);
                 ((TabActivityGroup) getParent()).startChildActivity("BoardListActivity", intent);
             }
         });
         
         // Add listeners
-        mModel.addListener(mOnBoardReceivedListener);
+        mModel.addListener(mOnBoardListsReceivedListener);
         
         // Get bundle extras
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
         
-        mController.fetchBoard(mBoardId);
+        mController.getListsByBoard(mBoardId);
         
         populateView();
     }
@@ -192,7 +179,7 @@ public class BoardActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
 
-        mModel.removeListener(mOnBoardReceivedListener);
+        mModel.removeListener(mOnBoardListsReceivedListener);
     }
 
     @Override
@@ -209,6 +196,6 @@ public class BoardActivity extends Activity {
     }
     
     private void populateView() {
-
+        mBoardText.setText(mModel.getBoard(mBoardId).name);
     }
 }

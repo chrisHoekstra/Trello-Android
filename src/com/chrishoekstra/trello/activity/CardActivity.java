@@ -1,31 +1,22 @@
 package com.chrishoekstra.trello.activity;
 
-import java.util.ArrayList;
-
-import com.chrishoekstra.trello.R;
-import com.chrishoekstra.trello.BundleKeys;
-import com.chrishoekstra.trello.adapter.BoardAdapter;
-import com.chrishoekstra.trello.adapter.BoardListAdapter;
-import com.chrishoekstra.trello.adapter.CardAdapter;
-import com.chrishoekstra.trello.controller.TrelloController;
-import com.chrishoekstra.trello.model.TrelloModel;
-import com.chrishoekstra.trello.vo.BoardListVO;
-import com.chrishoekstra.trello.vo.BoardVO;
-import com.chrishoekstra.trello.vo.CardVO;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import com.chrishoekstra.trello.BundleKeys;
+import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.controller.TrelloController;
+import com.chrishoekstra.trello.model.TrelloModel;
+import com.chrishoekstra.trello.vo.CardVO;
 
 public class CardActivity extends Activity {
     
@@ -48,8 +39,8 @@ public class CardActivity extends Activity {
     // Listeners
     
     // Activity variables
-    private CardVO mCard;
     private String mCardId;
+    private String mBoardListId;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,13 +65,6 @@ public class CardActivity extends Activity {
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
-        
-        ArrayList<CardVO> cards = mModel.getCurrentBoard().cards;
-        for (CardVO card : cards) {
-            if (card._id.equals(mCardId)) {
-                mCard = card;
-            }
-        }
         
         populateView();
     }
@@ -175,17 +159,21 @@ public class CardActivity extends Activity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         
-        outState.putString(BundleKeys.CARD_ID, mCardId);
+        outState.putString(BundleKeys.CARD_ID,       mCardId);
+        outState.putString(BundleKeys.BOARD_LIST_ID, mBoardListId);
     }
     
     private void getBundleExtras(final Bundle bundle) {
         if (bundle != null) {
-            mCardId = bundle.getString(BundleKeys.CARD_ID);
+            mCardId      = bundle.getString(BundleKeys.CARD_ID);
+            mBoardListId = bundle.getString(BundleKeys.BOARD_LIST_ID);
         }
     }
     
     private void populateView() {
-        mNameText.setText(mCard.name);
-        mDescriptionText.setText(mCard.desc);
+        CardVO card = mModel.getCard(mBoardListId, mCardId);
+        
+        mNameText.setText(card.name);
+        mDescriptionText.setText(card.desc);
     }
 }

@@ -2,7 +2,6 @@ package com.chrishoekstra.trello.service;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
@@ -26,6 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -36,6 +36,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
@@ -47,32 +48,37 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.chrishoekstra.trello.vo.AddCardVO;
 import com.chrishoekstra.trello.vo.AllBoardsResultVO;
+import com.chrishoekstra.trello.vo.BoardListVO;
 import com.chrishoekstra.trello.vo.BoardResultVO;
+import com.chrishoekstra.trello.vo.BoardVO;
 import com.chrishoekstra.trello.vo.CardVO;
 import com.chrishoekstra.trello.vo.LoginResultsVO;
+import com.chrishoekstra.trello.vo.MemberVO;
 import com.chrishoekstra.trello.vo.NotificationVO;
 import com.chrishoekstra.trello.vo.NotificationsResultVO;
 
 public class TrelloService {
-    private static final Object USER_AGENT_STRING = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:5.0.1) Gecko/20100101 Firefox/5.0.1";
+    private static final String USER_AGENT_STRING = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:5.0.1) Gecko/20100101 Firefox/5.0.1";
+    
+    private static final String PUBLIC_KEY = "040837a3efd1a6ec952f26473ea6ba8a";
     
     private static final String TRELLO_URL = "https://trello.com/";
+    private static final String TRELLO_API_URL = "https://api.trello.com/1/";
     private static final String ME_BOARDS = "data/me/boards";
     private static final String DATA_BOARD = "data/board";
     private static final String DATA = "data";
     private static final String API_APP = "api/app";
-    private static final String API_CARD = "api/card";
     
     private static final Object METHOD_LOGIN = "login";
 
 
 
-    
+    public String mToken;
     public JsonFactory mJsonFactory;
     public ObjectMapper mObjectMapper;
     public HttpContext mContext;
@@ -97,63 +103,24 @@ public class TrelloService {
         mContext.setAttribute(ClientContext.COOKIE_STORE, mCookieStore);
     }
 
-    public String getFilteredToken() {
-        ArrayList<Cookie> cookies = new ArrayList<Cookie>(mCookieStore.getCookies());
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("token")) {
-                String token = cookie.getValue();
-                return token.replaceFirst("%2F", "/");
-            }
-        }
-        
-        return "";
+    public void setToken(String token) {
+        mToken = token;
     }
-    
-    public boolean login(String username, String password) {
-        boolean results = false;
-        HttpClient httpClient = getHttpClient();
-        HttpPost httpPost = new HttpPost(TRELLO_URL + API_APP);
-        
-        JSONObject json = new JSONObject();
-        JSONObject data = new JSONObject();
-        
-        try {
-            data.put("user", username);
-            data.put("password", password);
-            json.put("data", data);
-            json.put("token", "");
-            json.put("method", METHOD_LOGIN);
-            
-            StringEntity parametersString = new StringEntity(json.toString());
-            parametersString.setContentEncoding("UTF-8");
-            parametersString.setContentType("application/json");
-            
-            httpPost.setEntity(parametersString);
-            httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
-            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
-            
-            HttpResponse response = httpClient.execute(httpPost, mContext);
-            
-            if (response != null) {
-                LoginResultsVO loginResults = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), LoginResultsVO.class);
-                results = true;
-            }
 
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }      
-        
-        return results;
+    public String getRequestLink() {
+        return "https://trello.com/1/connect?key=040837a3efd1a6ec952f26473ea6ba8a&name=TrelloAndroid&response_type=token&context=read,write";
     }
     
-    public AllBoardsResultVO getBoardResults() {
-        AllBoardsResultVO results = null;
-        HttpGet httpGet = new HttpGet(TRELLO_URL + ME_BOARDS);
+    
+    
+    public ArrayList<BoardVO> getAllBoards() {
+        ArrayList<BoardVO> result = null;
+        
+        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        params.add(new BasicNameValuePair("key", PUBLIC_KEY));
+        params.add(new BasicNameValuePair("token", mToken));
+        
+        HttpGet httpGet = new HttpGet(TRELLO_API_URL + "members/" + "me/" + "boards/" + "all?" + URLEncodedUtils.format(params, "UTF-8"));
         HttpClient httpClient = getHttpClient();
         
         try {
@@ -163,64 +130,7 @@ public class TrelloService {
             HttpResponse response = httpClient.execute(httpGet, mContext);
             
             if (response != null) {
-                results = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), AllBoardsResultVO.class);
-            }
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }      
-        
-        return results;
-    }
-
-    public BoardResultVO getBoard(String boardId) {
-        BoardResultVO results = null;
-        HttpGet httpGet = new HttpGet(TRELLO_URL + DATA_BOARD + "/" + boardId + "/current");
-        HttpClient httpClient = getHttpClient();
-        
-        try {
-            httpGet.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
-            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
-
-            HttpResponse response = httpClient.execute(httpGet, mContext);
-            
-            if (response != null) {
-                results = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), BoardResultVO.class);
-            }
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        return results;
-    }
-
-    public CardVO addCard(AddCardVO addCardVO) {
-        CardVO result = null;
-        HttpClient httpClient = getHttpClient();
-        HttpPost httpPost = new HttpPost(TRELLO_URL + API_CARD);
-        
-        try {
-            StringWriter writer = new StringWriter();
-            mObjectMapper.writeValue(writer, addCardVO);
-            
-            StringEntity parametersString = new StringEntity(writer.toString());
-            parametersString.setContentEncoding("UTF-8");
-            parametersString.setContentType("application/json");
-            
-            httpPost.setEntity(parametersString);
-            httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
-            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
-            
-            HttpResponse response = httpClient.execute(httpPost, mContext);
-            
-            if (response != null) {
-                result = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), CardVO.class);
+                result = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), new TypeReference<ArrayList<BoardVO>>(){});
             }
 
         } catch (ClientProtocolException e) {
@@ -231,16 +141,15 @@ public class TrelloService {
         
         return result;
     }
-    
-    public NotificationsResultVO getNotifications(String username, Integer counts) {
-        NotificationsResultVO results = null;
-        String url = TRELLO_URL + DATA + "/" + username + "/notifications";
+
+    public ArrayList<NotificationVO> getNotifications() {
+        ArrayList<NotificationVO> result = null;
         
-        if (counts != null) {
-            url += "?skip=" + counts;
-        }
+        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        params.add(new BasicNameValuePair("key", PUBLIC_KEY));
+        params.add(new BasicNameValuePair("token", mToken));
         
-        HttpGet httpGet = new HttpGet(url);
+        HttpGet httpGet = new HttpGet(TRELLO_API_URL + "members/" + "me/" + "notifications?" + URLEncodedUtils.format(params, "UTF-8"));
         HttpClient httpClient = getHttpClient();
         
         try {
@@ -250,7 +159,7 @@ public class TrelloService {
             HttpResponse response = httpClient.execute(httpGet, mContext);
             
             if (response != null) {
-                results = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), NotificationsResultVO.class);
+                result = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), new TypeReference<ArrayList<NotificationVO>>(){});
             }
 
         } catch (ClientProtocolException e) {
@@ -259,7 +168,130 @@ public class TrelloService {
             e.printStackTrace();
         }
         
-        return results;
+        return result;
+    }
+
+    public MemberVO getUser() {
+        MemberVO result = null;
+        
+        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        params.add(new BasicNameValuePair("key", PUBLIC_KEY));
+        params.add(new BasicNameValuePair("token", mToken));
+        
+        HttpGet httpGet = new HttpGet(TRELLO_API_URL + "members/" + "me?" + URLEncodedUtils.format(params, "UTF-8"));
+        HttpClient httpClient = getHttpClient();
+        
+        try {
+            httpGet.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
+
+            HttpResponse response = httpClient.execute(httpGet, mContext);
+            
+            if (response != null) {
+                result = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), MemberVO.class);
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
+
+    public ArrayList<BoardListVO> getListsByBoard(String boardId) {
+        ArrayList<BoardListVO> result = null;
+        
+        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        params.add(new BasicNameValuePair("key", PUBLIC_KEY));
+        params.add(new BasicNameValuePair("token", mToken));
+        params.add(new BasicNameValuePair("cards", "none"));
+        
+        HttpGet httpGet = new HttpGet(TRELLO_API_URL + "boards/" + boardId + "/lists?" + URLEncodedUtils.format(params, "UTF-8"));
+        HttpClient httpClient = getHttpClient();
+        
+        try {
+            httpGet.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
+
+            HttpResponse response = httpClient.execute(httpGet, mContext);
+            
+            if (response != null) {
+                result = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), new TypeReference<ArrayList<BoardListVO>>(){});
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
+
+    public ArrayList<CardVO> getCardsByBoardList(String boardListId) {
+        ArrayList<CardVO> result = null;
+        
+        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        params.add(new BasicNameValuePair("key",     PUBLIC_KEY));
+        params.add(new BasicNameValuePair("token",   mToken));
+        params.add(new BasicNameValuePair("filter",  "open"));
+        params.add(new BasicNameValuePair("badges",  "true"));
+        params.add(new BasicNameValuePair("labels",  "true"));
+        params.add(new BasicNameValuePair("members", "true"));
+        
+        HttpGet httpGet = new HttpGet(TRELLO_API_URL + "lists/" + boardListId + "/cards?" + URLEncodedUtils.format(params, "UTF-8"));
+        HttpClient httpClient = getHttpClient();
+        
+        try {
+            httpGet.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
+
+            HttpResponse response = httpClient.execute(httpGet, mContext);
+            
+            if (response != null) {
+                result = mObjectMapper.readValue(mJsonFactory.createJsonParser(new InputStreamReader(response.getEntity().getContent(), "UTF-8")), new TypeReference<ArrayList<CardVO>>(){});
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
+
+    public Boolean addCard(String boardListId, String name) {
+        Boolean result = false;
+        
+        ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        params.add(new BasicNameValuePair("key", PUBLIC_KEY));
+        params.add(new BasicNameValuePair("token", mToken));
+        params.add(new BasicNameValuePair("name", name));
+        params.add(new BasicNameValuePair("idList", boardListId));
+        
+        HttpPost httpPost = new HttpPost(TRELLO_API_URL + "cards?" + URLEncodedUtils.format(params, "UTF-8"));
+        HttpClient httpClient = getHttpClient();
+        
+        try {
+            httpPost.setHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT_STRING);
+
+            HttpResponse response = httpClient.execute(httpPost, mContext);
+            
+            if (response != null) {
+                result = true;
+            }
+
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return result;
     }
     
     public class CustomSSLSocketFactory extends SSLSocketFactory {

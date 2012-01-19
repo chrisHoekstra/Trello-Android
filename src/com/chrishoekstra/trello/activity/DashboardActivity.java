@@ -19,7 +19,6 @@ import com.chrishoekstra.trello.R;
 import com.chrishoekstra.trello.adapter.BoardAdapter;
 import com.chrishoekstra.trello.controller.TrelloController;
 import com.chrishoekstra.trello.model.TrelloModel;
-import com.chrishoekstra.trello.vo.AllBoardsResultVO;
 import com.chrishoekstra.trello.vo.MemberVO;
 
 public class DashboardActivity extends Activity {
@@ -67,7 +66,7 @@ public class DashboardActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
                 Intent intent = new Intent(getParent(), BoardActivity.class);
-                intent.putExtra(BundleKeys.BOARD_ID, mBoardAdapter.getItem(position)._id);
+                intent.putExtra(BundleKeys.BOARD_ID, mBoardAdapter.getItem(position).id);
                 ((TabActivityGroup) getParent()).startChildActivity("BoardActivity", intent);
             }
         });
@@ -183,22 +182,11 @@ public class DashboardActivity extends Activity {
     }
     
     private void populateView() {
-        AllBoardsResultVO allBoards = mModel.getAllBoardsResult();
-        
-        mBoardAdapter = new BoardAdapter(this, R.id.name, allBoards.boards);
+        mBoardAdapter = new BoardAdapter(this, R.id.name, mModel.getAllBoards());
         mBoardsList.setAdapter(mBoardAdapter);
         
-        MemberVO user = null;
-        for (MemberVO member : allBoards.members) {
-            if (member._id.equals(allBoards.idMember)) {
-                user = member;
-                break;
-            }
-        }
-        
-        if (user != null) {
-            mFullNameText.setText(user.fullName);
-            mUsernameText.setText('(' + user.username + ')');
-        }   
+        MemberVO user = mModel.getUser();
+        mFullNameText.setText(user.fullName);
+        mUsernameText.setText('(' + user.username + ')');
     }
 }
