@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.chrishoekstra.trello.BundleKeys;
 import com.chrishoekstra.trello.R;
-import com.chrishoekstra.trello.controller.TrelloController;
+import com.chrishoekstra.trello.TrelloApplication;
 import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.vo.CardVO;
 
@@ -33,9 +33,6 @@ public class CardActivity extends Activity {
     // Models
     private TrelloModel mModel;
     
-    // Controllers
-    private TrelloController mController;
-    
     // Listeners
     
     // Activity variables
@@ -51,12 +48,6 @@ public class CardActivity extends Activity {
         mNameText        = (TextView) findViewById(R.id.name);
         mDescriptionText = (TextView) findViewById(R.id.description);
         
-        // Instantiate models
-        mModel = TrelloModel.getInstance();
-        
-        // Instantiate controllers
-        mController = TrelloController.getInstance();
-        
         // Create listeners
         
         // Add listeners
@@ -65,6 +56,7 @@ public class CardActivity extends Activity {
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
+        mModel = ((TrelloApplication)getApplication()).getModel();
         
         populateView();
     }

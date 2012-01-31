@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.TrelloApplication;
 import com.chrishoekstra.trello.Utils;
 import com.chrishoekstra.trello.gravatar.GravatarAPI;
 import com.chrishoekstra.trello.gravatar.GravatarView;
@@ -28,10 +29,10 @@ public class NotificationsAdapter extends ArrayAdapter<NotificationVO> {
         protected GravatarView gravatar;
     }
     
-    public NotificationsAdapter(Context context, int textViewResourceId, List<NotificationVO> notifications) {
+    public NotificationsAdapter(Context context, int textViewResourceId, List<NotificationVO> notifications, TrelloModel model) {
         super(context, textViewResourceId, notifications);
 
-        mModel = TrelloModel.getInstance();
+        mModel = model;
         mInflater = LayoutInflater.from(context);
         mNotifications = notifications;
     }

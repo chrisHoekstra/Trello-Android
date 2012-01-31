@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import com.chrishoekstra.trello.BundleKeys;
 import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.TrelloApplication;
 import com.chrishoekstra.trello.adapter.BoardAdapter;
-import com.chrishoekstra.trello.controller.TrelloController;
 import com.chrishoekstra.trello.model.TrelloModel;
 import com.chrishoekstra.trello.vo.MemberVO;
 
@@ -37,9 +37,6 @@ public class DashboardActivity extends Activity {
     // Models
     private TrelloModel mModel;
     
-    // Controllers
-    private TrelloController mController;
-    
     // Listeners
     
     // Activity variables
@@ -54,12 +51,6 @@ public class DashboardActivity extends Activity {
         mBoardsList   = (ListView) findViewById(R.id.board_list);
         mFullNameText = (TextView) findViewById(R.id.full_name);
         mUsernameText = (TextView) findViewById(R.id.username);
-        
-        // Instantiate models
-        mModel = TrelloModel.getInstance();
-        
-        // Instantiate controllers
-        mController = TrelloController.getInstance();
         
         // Create listeners
         mBoardsList.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -77,6 +68,7 @@ public class DashboardActivity extends Activity {
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
+        mModel = ((TrelloApplication)getApplication()).getModel();
         
         populateView();
     }

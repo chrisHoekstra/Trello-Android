@@ -4,8 +4,11 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -22,9 +25,13 @@ import android.widget.Toast;
 
 import com.chrishoekstra.trello.BundleKeys;
 import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.TrelloApplication;
 import com.chrishoekstra.trello.adapter.CardAdapter;
-import com.chrishoekstra.trello.controller.TrelloController;
+import com.chrishoekstra.trello.listener.CardAddedListener;
+import com.chrishoekstra.trello.listener.CardsReceivedListener;
 import com.chrishoekstra.trello.model.TrelloModel;
+import com.chrishoekstra.trello.service.TrelloBinder;
+import com.chrishoekstra.trello.service.TrelloService;
 import com.chrishoekstra.trello.vo.BoardListVO;
 import com.chrishoekstra.trello.vo.CardVO;
 
@@ -48,22 +55,26 @@ public class BoardListActivity extends Activity {
     // Models
     private TrelloModel mModel;
     
-    // Controllers
-    private TrelloController mController;
-    
-    // Listeners
-    private TrelloModel.OnCardsReceivedListener mOnCardsReceivedListener;
-    private TrelloModel.OnCardAddedListener mOnCardAddedListener;
-    
     // Activity variables
     private CardAdapter mCardAdapter;
     private String mBoardId;
     private String mBoardListId;
     
+    private State mState;
+    private boolean mIsConfigurationChanging;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.board_list);
+
+        // Instantiate state
+        mState = (State) getLastNonConfigurationInstance();
+        if (mState == null) {
+            mState = new State();
+            getApplicationContext().bindService(new Intent(this, TrelloService.class), mState, BIND_AUTO_CREATE);
+        }
+        mState.attach(this);
         
         // Instantiate view items
         mCardList      = (ListView) findViewById(R.id.card_list);
@@ -74,35 +85,7 @@ public class BoardListActivity extends Activity {
         mCancelButton  = (Button)   findViewById(R.id.cancel);
         mAddCardLayout = (RelativeLayout) findViewById(R.id.add_card_layout);
         
-        // Instantiate models
-        mModel = TrelloModel.getInstance();
-        
-        // Instantiate controllers
-        mController = TrelloController.getInstance();
-        
         // Create listeners
-        mOnCardsReceivedListener = new TrelloModel.OnCardsReceivedListener() {
-            @Override
-            public void onCardsRecivedEvent(TrelloModel model, String boardListId, ArrayList<CardVO> result) {
-                mCardAdapter = new CardAdapter(BoardListActivity.this, R.id.name, result, model);
-                mCardList.setAdapter(mCardAdapter);
-            }
-        };
-        
-        mOnCardAddedListener = new TrelloModel.OnCardAddedListener() {
-            @Override
-            public void onCardAddedEvent(TrelloModel model, Boolean result) {
-                if (result) {
-                    Toast.makeText(BoardListActivity.this, "Card added!", Toast.LENGTH_SHORT).show();
-                    mController.getCardsByList(mBoardListId);
-                } else {
-                    Toast.makeText(BoardListActivity.this, "Card addition failed!", Toast.LENGTH_SHORT).show();
-                }
-
-                endAddCard();
-            }
-        };
-        
         mCardList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
@@ -131,20 +114,15 @@ public class BoardListActivity extends Activity {
         mAddButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mController.addCard(mBoardListId, mAddCardEdit.getText().toString());
+                mState.binder.addCard(mState, mBoardListId, mAddCardEdit.getText().toString());
             }
         });
-        
-        // Add listeners
-        mModel.addListener(mOnCardsReceivedListener);
-        mModel.addListener(mOnCardAddedListener);
         
         // Get bundle extras
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
-        
-        mController.getCardsByList(mBoardListId);
+        mModel = ((TrelloApplication)getApplication()).getModel();
         
         populateView();
     }
@@ -228,14 +206,21 @@ public class BoardListActivity extends Activity {
         //new PasscodeCheckTask(TemplateActivity.this.getApplicationContext(), TemplateActivity.this).execute();
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        
-        mModel.removeListener(mOnCardsReceivedListener);
-        mModel.removeListener(mOnCardAddedListener);
-        
-        // Release remaining resources
+
+        if (!mIsConfigurationChanging) {
+            getApplicationContext().unbindService(mState);
+        }
+    }
+
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        mIsConfigurationChanging = true;
+
+        return mState;
     }
 
     @Override
@@ -266,5 +251,68 @@ public class BoardListActivity extends Activity {
     private void endAddCard() {
         mAddCardLayout.setVisibility(View.GONE);
         mAddCardButton.setVisibility(View.VISIBLE);
+    }
+    
+    private void onBinderAvailable() {
+        mState.binder.getCardsByList(mState, mBoardListId);
+    }
+    
+    private void onCardsReceived(ArrayList<CardVO> cards) {
+        mCardAdapter = new CardAdapter(BoardListActivity.this, R.id.name, cards, mModel);
+        mCardList.setAdapter(mCardAdapter);
+    }
+
+    public void onCardAdded() {
+        Toast.makeText(BoardListActivity.this, "Card added!", Toast.LENGTH_SHORT).show();
+        endAddCard();
+        
+        mState.binder.getCardsByList(mState, mBoardListId);
+    }
+    
+    public void handleError(Exception exception) {
+        
+    }
+    
+    private static class State implements ServiceConnection, CardsReceivedListener, CardAddedListener {
+        private BoardListActivity activity;
+        private TrelloBinder binder;
+        private TrelloModel model;
+        
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            this.binder = (TrelloBinder)binder;
+
+            activity.onBinderAvailable();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            this.binder = null;
+        }
+
+        public void attach(BoardListActivity activity) {
+            this.activity = activity;
+
+            model = ((TrelloApplication)activity.getApplication()).getModel();
+        }
+        
+        
+        // Listeners
+
+        public void onCardAdded() {
+            activity.onCardAdded();
+        }
+
+        public void onCardsReceived(String boardListId, ArrayList<CardVO> cards) {
+            model.setBoardList(boardListId, cards);
+            
+            if (boardListId.equals(activity.mBoardListId)) {
+                activity.onCardsReceived(cards);
+            }
+        }
+
+        public void handleError(Exception e) {
+            activity.handleError(e);
+        }
     }
 }

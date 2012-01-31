@@ -14,10 +14,9 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.TrelloApplication;
 import com.chrishoekstra.trello.adapter.NotificationsAdapter;
-import com.chrishoekstra.trello.controller.TrelloController;
 import com.chrishoekstra.trello.model.TrelloModel;
-import com.chrishoekstra.trello.vo.NotificationsResultVO;
 
 public class NotificationsActivity extends ListActivity {
 
@@ -36,9 +35,6 @@ public class NotificationsActivity extends ListActivity {
     // Models
     private TrelloModel mModel;
     
-    // Controllers
-    private TrelloController mController;
-    
     // Listeners
     
     // Activity variables
@@ -53,12 +49,6 @@ public class NotificationsActivity extends ListActivity {
         mMoreLayout     = (RelativeLayout) getLayoutInflater().inflate(R.layout.more_layout, null);
         mMoreButton     = (Button)         mMoreLayout.findViewById(R.id.more_button);
         mProgressLayout = (RelativeLayout) mMoreLayout.findViewById(R.id.progress_layout);
-        
-        // Instantiate models
-        mModel = TrelloModel.getInstance();
-        
-        // Instantiate controllers
-        mController = TrelloController.getInstance();
         
         // Create listeners
         mMoreButton.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +67,7 @@ public class NotificationsActivity extends ListActivity {
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
+        mModel = ((TrelloApplication)getApplication()).getModel();
         
         populateView();
     }
@@ -186,7 +177,7 @@ public class NotificationsActivity extends ListActivity {
         mMoreButton.setVisibility(View.VISIBLE);
         mProgressLayout.setVisibility(View.GONE);
         
-        mAdapter = new NotificationsAdapter(this, R.id.name, mModel.getNotifications());
+        mAdapter = new NotificationsAdapter(this, R.id.name, mModel.getNotifications(), mModel);
         setListAdapter(mAdapter);
     }
 }

@@ -3,14 +3,11 @@ package com.chrishoekstra.trello.activity;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -18,18 +15,15 @@ import android.widget.TextView;
 
 import com.chrishoekstra.trello.BundleKeys;
 import com.chrishoekstra.trello.R;
+import com.chrishoekstra.trello.TrelloApplication;
 import com.chrishoekstra.trello.adapter.BoardListAdapter;
-import com.chrishoekstra.trello.controller.TrelloController;
+import com.chrishoekstra.trello.listener.BoardListReceivedListener;
 import com.chrishoekstra.trello.model.TrelloModel;
+import com.chrishoekstra.trello.service.TrelloBinder;
+import com.chrishoekstra.trello.service.TrelloService;
 import com.chrishoekstra.trello.vo.BoardListVO;
 
 public class BoardActivity extends Activity {
-    
-    // Intent results static definitions
-
-    // Dialog static definitions
-
-    // Class static definitions
     
     // View items
     private ListView mBoardListsList;
@@ -38,42 +32,31 @@ public class BoardActivity extends Activity {
     // Models
     private TrelloModel mModel;
     
-    // Controllers
-    private TrelloController mController;
-    
-    // Listeners
-    private TrelloModel.OnBoardListsReceivedListener mOnBoardListsReceivedListener;
-    
     // Activity variables
     private BoardListAdapter mBoardListAdapter;
     private String mBoardId;
+
+    private State mState;
+    private boolean mIsConfigurationChanging;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.board);
+
+        // Instantiate state
+        mState = (State) getLastNonConfigurationInstance();
+        if (mState == null) {
+            mState = new State();
+            getApplicationContext().bindService(new Intent(this, TrelloService.class), mState, BIND_AUTO_CREATE);
+        }
+        mState.attach(this);
         
         // Instantiate view items
         mBoardListsList = (ListView) findViewById(R.id.board_lists_list);
         mBoardText      = (TextView) findViewById(R.id.board);
         
-        // Instantiate models
-        mModel = TrelloModel.getInstance();
-        
-        // Instantiate controllers
-        mController = TrelloController.getInstance();
-        
         // Create listeners
-        mOnBoardListsReceivedListener = new TrelloModel.OnBoardListsReceivedListener() {
-            @Override
-            public void onBoardListReceviedEvent(TrelloModel model, String boardId, ArrayList<BoardListVO> result) {
-                if (boardId.equals(mBoardId)) {
-                    mBoardListAdapter = new BoardListAdapter(BoardActivity.this, R.id.name, result);
-                    mBoardListsList.setAdapter(mBoardListAdapter);
-                }
-            }
-        };
-        
         mBoardListsList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
@@ -84,104 +67,31 @@ public class BoardActivity extends Activity {
             }
         });
         
-        // Add listeners
-        mModel.addListener(mOnBoardListsReceivedListener);
-        
         // Get bundle extras
         getBundleExtras((savedInstanceState != null) ? savedInstanceState : getIntent().getExtras());
         
         // Instantiate activity variables
-        
-        mController.getListsByBoard(mBoardId);
+        mModel = ((TrelloApplication)getApplication()).getModel();
         
         populateView();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        switch (requestCode) {
-            //case ACTIVITY_RESULT_ID :
-            //    break;
-        }
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {        
-        MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.menu_id, menu);
-        
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            //case R.id.view_item_id : 
-            //    break;
-            default:
-                break;
-        }
-        
-        // Return true if you want the click event to stop here, or false
-        // if you want the click even to continue propagating possibly
-        // triggering an onClick event
-        return false;
-    }
-    
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo info) {
-        super.onCreateContextMenu(menu, view, info);
-
-        MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.menu_id, menu);
-    }
-    
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            //case R.id.view_item_id : 
-            //    break;
-            default:
-                break;
-        }
-        
-        // Return true if you want the click event to stop here, or false
-        // if you want the click even to continue propagating possibly
-        // triggering an onClick event
-        return false;
-    }
-    
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            //case DIALOG_STATIC_DEFINITION:
-            //    return new Dialog();
-            //    break;
-        }
-        
-        return super.onCreateDialog(id);
-    }
-    
-    @Override
-    public void onPause() {
-        super.onPause();
-        
-        if (isFinishing()) {
-            // Clean up of any information in model
-        }
-        
-        //new PasscodeCheckTask(TemplateActivity.this.getApplicationContext(), TemplateActivity.this).execute();
-    }
-    
-    @Override
     public void onDestroy() {
         super.onDestroy();
 
-        mModel.removeListener(mOnBoardListsReceivedListener);
+        if (!mIsConfigurationChanging) {
+            getApplicationContext().unbindService(mState);
+        }
     }
 
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        mIsConfigurationChanging = true;
+
+        return mState;
+    }
+    
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -197,5 +107,62 @@ public class BoardActivity extends Activity {
     
     private void populateView() {
         mBoardText.setText(mModel.getBoard(mBoardId).name);
+        
+        ArrayList<BoardListVO> boardLists = mModel.getBoardLists(mBoardId);
+        if (boardLists != null) {
+            onBoardListReceived(boardLists);
+        }
+    }
+    
+    private void onBoardListReceived(ArrayList<BoardListVO> boardLists) {
+        mBoardListAdapter = new BoardListAdapter(BoardActivity.this, R.id.name, boardLists);
+        mBoardListsList.setAdapter(mBoardListAdapter);
+    }
+    
+    private void displayError(Exception e) {
+        // TODO - add error handling here
+    }
+
+    private void onBinderAvailable() {
+        mState.binder.getListsByBoard(mState, mBoardId);
+    }
+    
+    private static class State implements ServiceConnection, BoardListReceivedListener {
+        private BoardActivity activity;
+        private TrelloBinder binder;
+        private TrelloModel model;
+        
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            this.binder = (TrelloBinder)binder;
+
+            activity.onBinderAvailable();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            this.binder = null;
+        }
+
+        public void attach(BoardActivity activity) {
+            this.activity = activity;
+
+            model = ((TrelloApplication)activity.getApplication()).getModel();
+        }
+
+        
+        // Listeners
+
+        public void onBoardListReceived(String boardId, ArrayList<BoardListVO> boardLists) {
+            model.setBoard(boardId, boardLists);
+            
+            if (boardId.equals(activity.mBoardId)) {
+                activity.onBoardListReceived(boardLists);
+            }
+        }
+
+        public void handleError(Exception e) {
+            activity.displayError(e);
+        }
     }
 }
